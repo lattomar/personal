@@ -776,9 +776,12 @@ const K = {
   assistant:"pitch440.assistant.v1", chatUrl:"pitch440.chatUrl.v1"
 };
 
-const DEFAULT_HOUSE_STYLE = `Use a polished, editorial music-label voice that feels informed, natural and emotionally precise.
+const LEGACY_HOUSE_STYLE = `Use a polished, editorial music-label voice that feels informed, natural and emotionally precise.
 Write one flowing paragraph of exactly three concise sentences: first introduce “Title” by Artist, the genre or sonic blend, and the central subject; then explain the story, conflict or message using details supported by the lyrics; finally close on the emotional arc, effect or musical character.
 Keep the language vivid but accessible. Prefer specific emotional insight over vague praise, vary sentence openings naturally, and avoid hype, clichés, superlatives, artist comparisons or unsupported production details.`;
+const DEFAULT_HOUSE_STYLE = `Use a polished, editorial music-label voice that feels informed, natural and emotionally precise.
+Treat the three examples as inspiration, not a fill-in-the-blanks template. Freely vary the sentence structure, openings, order and emphasis to suit each song; do not force the same idea into the second sentence every time or write phrases such as “the lyrics explore” and “the lyrics describe.”
+Introduce the title, artist and sound naturally, then focus on the most interesting combination of story, message, emotion and musical character supported by the supplied material. Keep it vivid but accessible, with no hype, clichés, superlatives, artist comparisons or invented details.`;
 
 // Neither Spotify nor Apple publishes the mood list inside its pitch form, so
 // this is a working default covering the terms that recur across those forms —
@@ -1040,7 +1043,11 @@ async function removeSong(id){
 }
 
 /* --------------------------------------------------------- house style */
-let houseStyle = safeGet(K.house) || DEFAULT_HOUSE_STYLE;
+function preferredHouseStyle(text){
+  const clean = typeof text === "string" ? text.trim() : "";
+  return !clean || clean === LEGACY_HOUSE_STYLE ? DEFAULT_HOUSE_STYLE : clean;
+}
+let houseStyle = preferredHouseStyle(safeGet(K.house));
 
 async function loadHouseFromDb(){
   if (!store.db) return;
@@ -1048,7 +1055,11 @@ async function loadHouseFromDb(){
     const snap = await store.db.doc("settings/house").get();
     if (snap && snap.exists){
       const d = snap.data() || {};
-      if (typeof d.text === "string"){ houseStyle = d.text; safeSet(K.house, houseStyle); refreshPrompt(); }
+      if (typeof d.text === "string"){
+        houseStyle = preferredHouseStyle(d.text);
+        safeSet(K.house, houseStyle);
+        refreshPrompt();
+      }
     }
   } catch(e){ /* keep the local copy */ }
 }
@@ -1127,21 +1138,21 @@ function buildPrompt(){
   L.push("RULES");
   L.push("- DESCRIPTION must be " + LIMIT + " characters or fewer, counting spaces and punctuation. This is a hard cap. Count it before answering and rewrite it shorter if needed.");
   L.push("- Write DESCRIPTION in English, whatever language the lyrics are in.");
-  L.push("- Write one flowing paragraph of exactly three concise sentences. No heading, bullet points, emoji or hashtags.");
-  L.push("- REQUIRED STRUCTURE: Sentence 1 opens with the title in curly quotation marks, names the artist naturally when supplied, identifies the genre or sonic blend, and states the central subject.");
-  L.push("- REQUIRED STRUCTURE: Sentence 2 explains the story, conflict or message using specific meaning supported by the lyrics.");
-  L.push("- REQUIRED STRUCTURE: Sentence 3 closes with the song's emotional arc, effect or musical character, but only when supported by the supplied information.");
+  L.push("- Write one flowing paragraph of two or three concise sentences. No heading, bullet points, emoji or hashtags.");
+  L.push("- Open naturally with the title in curly quotation marks and name the artist when supplied, but freely vary everything that follows to suit the individual song.");
+  L.push("- Draw from the strongest combination of story, conflict, message, emotion and musical character supported by the supplied material. Change the order and emphasis from song to song.");
+  L.push("- Describe the song directly. Do not fall into a fixed second-sentence formula and do not write phrases such as ‘the lyrics explore’, ‘the lyrics describe’ or ‘the song tells the story’.");
   L.push("- Use a clear editorial label tone: descriptive and emotionally specific, never salesy.");
   L.push("- No superlatives, comparisons to other artists or invented production, vocal or instrumental details.");
   L.push("- MOODS: choose " + (vocab.moodCap > 1 ? "up to " + vocab.moodCap : "one") +
     ", only from this list — " + vocab.moods.map(m => m.name).join(", ") + ".");
   L.push("- GENRE: one short phrase, such as \"pop ballad\", \"dance-pop\", \"alt-R&B\", \"acoustic singer-songwriter\".");
   L.push("");
-  L.push("STYLE REFERENCES — mirror their editorial tone, pacing and three-part structure. Do not copy their wording, and keep the new DESCRIPTION within " + LIMIT + " characters even though a reference may be longer.");
+  L.push("STYLE REFERENCES — use these as creative inspiration for editorial tone, detail and pacing, not as a fixed structure or fill-in-the-blanks template. You are free to vary sentence count, order, openings and emphasis. Do not copy their wording, and keep the new DESCRIPTION within " + LIMIT + " characters even though a reference may be longer.");
   L.push("“Akur” by Zaki Yamani is an emotional pop ballad about heartbreak, acceptance, and the difficult choice to let go. The song captures the pain of realizing that a relationship has changed, while choosing to honour and comply with a partner’s feelings and wishes despite the hurt it brings. Through melancholic melodies and heartfelt vocals, it reflects on love, sacrifice, and the strength it takes to step aside for someone you still deeply care for.");
   L.push("“完美世界 (PRFT WRLD)” is the third release from Lokk’s Huaweicore, blending underground rap and rage with distorted production, electronic synths, clipping, and heavily processed vocals. Rather than depicting an ideal world, the track explores Lokk’s self-created reality—one free from outside judgment, competition, and expectations. Chaotic yet controlled, it embraces scars, resilience, and the freedom to create your own rules when reality no longer fits.");
   L.push("“IKON” is a high-energy pop anthem that blends 80s disco nostalgia with modern dance-pop and electropop. Built around a confident, empowering message, the song celebrates individuality and the idea that everyone can be an icon in their own right. With an energetic beat and dedicated dance break, it delivers a bold, celebratory sound made for movement, self-expression, and creating your own moment.");
-  L.push("Before replying, compare DESCRIPTION with all three references. If its structure, pacing and editorial tone do not clearly belong beside them, rewrite it. Never borrow an unsupported production detail from a reference.");
+  L.push("Before replying, compare DESCRIPTION with all three references. It should feel editorially at home beside them without repeating their structure or stock phrases. Never borrow an unsupported production detail from a reference.");
   if (house){
     L.push("");
     L.push("HOUSE STYLE — these win over anything above");
