@@ -753,6 +753,10 @@ const K = {
   assistant:"pitch440.assistant.v1", chatUrl:"pitch440.chatUrl.v1"
 };
 
+const DEFAULT_HOUSE_STYLE = `Use a polished, editorial music-label voice that feels informed, natural and emotionally precise.
+Write one flowing paragraph of exactly three concise sentences: first introduce “Title” by Artist, the genre or sonic blend, and the central subject; then explain the story, conflict or message using details supported by the lyrics; finally close on the emotional arc, effect or musical character.
+Keep the language vivid but accessible. Prefer specific emotional insight over vague praise, vary sentence openings naturally, and avoid hype, clichés, superlatives, artist comparisons or unsupported production details.`;
+
 // Neither Spotify nor Apple publishes the mood list inside its pitch form, so
 // this is a working default covering the terms that recur across those forms —
 // not a copy of either. She edits it from the Vocabulary sheet; whatever she
@@ -1013,7 +1017,7 @@ async function removeSong(id){
 }
 
 /* --------------------------------------------------------- house style */
-let houseStyle = safeGet(K.house) || "";
+let houseStyle = safeGet(K.house) || DEFAULT_HOUSE_STYLE;
 
 async function loadHouseFromDb(){
   if (!store.db) return;
@@ -1348,10 +1352,20 @@ function manualPromptCopy(prompt, url){
 function openSavedChat(prompt){
   const url = safeGet(K.chatUrl);
   if (!url) return false;
-  copyText(prompt).then(copied => {
-    if (!copied){ manualPromptCopy(prompt, url); return; }
-    toast("Prompt copied — opening your saved ChatGPT chat");
-    window.location.assign(url);
+  // Begin copying while this tab still has focus, then open ChatGPT during the
+  // same click so browsers allow both actions. Reuse one ChatGPT tab each time.
+  const copyJob = copyText(prompt);
+  let chatTab = null;
+  try { chatTab = window.open(url, "bobasChatgpt"); } catch(e){ chatTab = null; }
+  copyJob.then(copied => {
+    if (!copied){
+      if (chatTab){ try { chatTab.close(); } catch(e){} }
+      manualPromptCopy(prompt, url);
+      return;
+    }
+    if (!chatTab){ linkFallback(url, true, ASSISTANTS[0]); return; }
+    try { chatTab.opener = null; } catch(e){}
+    toast("Prompt copied — your saved ChatGPT chat is open");
   });
   return true;
 }
@@ -1812,7 +1826,7 @@ function openHouse(){
     const ta = el("textarea");
     ta.rows = 7;
     ta.value = houseStyle;
-    ta.placeholder = "e.g. Never compare the artist to anyone else.\nAlways name the hook line.\nBritish spelling.\nNo exclamation marks.";
+    ta.placeholder = DEFAULT_HOUSE_STYLE;
     sheet.appendChild(ta);
     const row = el("div", "actions");
     const save = el("button", "btn primary", "Save");
@@ -2342,7 +2356,7 @@ $("btnCopyPrompt").addEventListener("click", async () => {
     $("btnChatSetup").hidden = a.id !== "chatgpt" || !safeGet(K.chatUrl);
     if (a.id === "chatgpt"){
       $("btnOpenGpt").lastChild.textContent = safeGet(K.chatUrl)
-        ? "Copy + go to saved chat" : "Set up ChatGPT chat";
+        ? "Copy + open saved chat" : "Set up ChatGPT chat";
     } else {
       $("btnOpenGpt").lastChild.textContent = a.bare ? "Open " + a.name : "Open";
     }
