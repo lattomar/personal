@@ -1,4 +1,20 @@
-<title>440 Pitch Desk</title>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Write song pitches that fit 440 characters.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%8E%80</text></svg>">
+<style>
+  html,body{margin:0}
+  body{font:14px system-ui,-apple-system,sans-serif}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<title>Boba’s Machine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
@@ -95,8 +111,8 @@ button,input,select,textarea{font:inherit; color:inherit}
 .brand{display:flex; align-items:center; gap:11px; margin-right:auto}
 .brand .mark{width:34px; height:34px; flex:none; color:var(--accent)}
 .brand h1{
-  font-family:var(--font-display); font-weight:700; font-size:27px;
-  line-height:1; letter-spacing:-.01em;
+  font-family:var(--font-display); font-weight:700; font-size:25px;
+  line-height:1.05; letter-spacing:-.01em; white-space:nowrap;
 }
 .brand .tagline{
   margin:3px 0 0; font-family:var(--font-mono); font-size:10.5px;
@@ -361,7 +377,8 @@ pre.prompt{
   .row,.row.thirds{grid-template-columns:1fr}
   .topbar-in{padding:11px 14px 12px; gap:10px}
   main{padding-inline:14px}
-  .brand h1{font-size:23px}
+  .brand h1{font-size:19px}
+  .brand .tagline{font-size:9.5px; letter-spacing:.1em}
   .count{display:none}
 }
 </style>
@@ -437,6 +454,7 @@ pre.prompt{
     <circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/>
     <path d="M20 4 8.1 16.4M20 20 8.1 7.6"/>
   </symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-books" viewBox="0 0 24 24">
     <path d="M4 4.5h4.5v15H4zM10.5 4.5H15v15h-4.5z"/>
@@ -452,12 +470,13 @@ pre.prompt{
     <div class="brand">
       <svg data-i class="mark" aria-hidden="true"><use href="#i-bow"/></svg>
       <div>
-        <h1>440</h1>
-        <p class="tagline">pitch desk</p>
+        <h1>Boba’s Machine</h1>
+        <p class="tagline">440-character song pitches</p>
       </div>
     </div>
     <div class="topbar-actions">
       <span class="count mono" id="libCount">no songs yet</span>
+      <button class="btn ghost sm" id="btnVocab"><svg data-i aria-hidden="true"><use href="#i-tag"/></svg>Vocabulary</button>
       <button class="btn ghost sm" id="btnHouse"><svg data-i aria-hidden="true"><use href="#i-star"/></svg>House style</button>
       <button class="btn ghost sm" id="btnExport"><svg data-i aria-hidden="true"><use href="#i-download"/></svg>Export</button>
       <button class="btn icon" id="btnTheme" aria-label="Switch between light and dark"><svg data-i aria-hidden="true"><use href="#i-moon"/></svg></button>
@@ -554,19 +573,28 @@ pre.prompt{
         <span class="hint">step 3</span>
       </div>
       <div class="card-body">
-        <div>
-          <label class="label" for="fGenre">Genre</label>
-          <input id="fGenre" type="text" list="genreList" placeholder="pop ballad" autocomplete="off">
-          <datalist id="genreList"></datalist>
+        <div class="row">
+          <div>
+            <label class="label" for="fGenre">Genre</label>
+            <input id="fGenre" type="text" placeholder="pop ballad" autocomplete="off">
+          </div>
+          <div>
+            <label class="label" for="fEnergy">Energy</label>
+            <select id="fEnergy">
+              <option value="">Not set</option>
+              <option>Low</option><option>Medium</option><option>High</option>
+            </select>
+          </div>
         </div>
         <div>
           <label class="label">Mood <span style="text-transform:none;letter-spacing:0">&mdash; tap to pick, the same words every time</span></label>
           <div class="chips" id="moodPicker"></div>
+          <p class="cap-note" id="moodCapNote" hidden></p>
         </div>
         <div class="row">
           <div>
             <label class="label" for="fMoodCustom">Add a mood of your own</label>
-            <input id="fMoodCustom" type="text" placeholder="type and press enter" autocomplete="off">
+            <input id="fMoodCustom" type="text" placeholder="type, or browse the list" autocomplete="off">
           </div>
           <div>
             <label class="label" for="fThemeInput">Themes</label>
@@ -687,6 +715,60 @@ pre.prompt{
   .version p{margin:0; font-size:12.5px; line-height:1.55; color:var(--ink-2)}
   .version .vmeta{display:flex; gap:8px; align-items:center; font-family:var(--font-mono); font-size:10.5px; color:var(--ink-3)}
   .version .vmeta .spacer{margin-left:auto}
+
+  .cap-note{
+    margin:8px 0 0; font-family:var(--font-mono); font-size:10.5px;
+    color:var(--warn); letter-spacing:.03em;
+  }
+
+  .combo{position:relative}
+  .combo>input{padding-right:34px}
+  .combo-toggle{
+    position:absolute; right:5px; top:50%; transform:translateY(-50%);
+    background:none; border:0; cursor:pointer; padding:6px; border-radius:7px;
+    color:var(--ink-3); display:flex; align-items:center;
+  }
+  .combo-toggle:hover{background:var(--surface-3); color:var(--ink)}
+  .combo-toggle svg{width:13px; height:13px}
+  .combo-list{
+    position:absolute; z-index:30; left:0; right:0; top:calc(100% + 4px);
+    background:var(--surface); border:1px solid var(--rule-strong);
+    border-radius:var(--radius-sm); box-shadow:var(--shadow-lift);
+    max-height:232px; overflow-y:auto; padding:4px; margin:0; list-style:none;
+  }
+  .combo-list li{padding:7px 10px; border-radius:7px; cursor:pointer; font-size:13.5px}
+  .combo-list li[aria-selected="true"],.combo-list li:hover{background:var(--accent-soft); color:var(--accent-deep)}
+  .combo-list li.none{color:var(--ink-3); font-style:italic; cursor:default}
+  .combo-list li.none:hover{background:transparent; color:var(--ink-3)}
+
+  .vocab-tabs{display:flex; gap:6px}
+  .vocab-tabs button{
+    flex:1; cursor:pointer; padding:7px; border-radius:999px; font-size:13px; font-weight:600;
+    border:1px solid var(--rule); background:var(--surface-2); color:var(--ink-2);
+  }
+  .vocab-tabs button.on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+  .vocab-rows{
+    display:flex; flex-direction:column; gap:6px; max-height:296px;
+    overflow-y:auto; padding:2px; margin:-2px;
+  }
+  .vocab-row{display:flex; gap:6px; align-items:center}
+  .vocab-row>input[type=text]{flex:1; min-width:0}
+  .vocab-row>select{width:auto; min-width:98px; flex:none}
+  .vocab-row .used{
+    font-family:var(--font-mono); font-size:9.5px; color:var(--ink-3);
+    white-space:nowrap; flex:none; min-width:30px; text-align:right;
+  }
+  .vocab-row .mini{
+    flex:none; cursor:pointer; border:1px solid var(--rule); background:var(--surface);
+    color:var(--ink-3); border-radius:7px; padding:6px 8px; line-height:1; font-size:12px;
+  }
+  .vocab-row .mini:hover{border-color:var(--accent); color:var(--accent)}
+  .toast .undo{
+    margin-left:10px; background:none; border:0; color:inherit; cursor:pointer;
+    font:inherit; font-weight:700; text-decoration:underline; padding:0;
+    pointer-events:auto;
+  }
+  .toasts{pointer-events:none}
 </style>
 <script>
 (function(){
@@ -697,26 +779,57 @@ const LIMIT = 440;
 const LYRIC_CAP = 12000;
 const K = {
   songs:"pitch440.songs.v1", house:"pitch440.house.v1",
-  theme:"pitch440.theme.v1", migrated:"pitch440.migrated.v1"
+  theme:"pitch440.theme.v1", migrated:"pitch440.migrated.v1",
+  vocab:"pitch440.vocab.v1", desk:"pitch440.desk.v1"
 };
 
-const MOODS = [
-  ["Euphoric","joy"],["Upbeat","joy"],["Playful","joy"],["Triumphant","joy"],
-  ["Romantic","love"],["Sensual","love"],["Tender","love"],
-  ["Hopeful","calm"],["Dreamy","calm"],["Calm","calm"],
-  ["Bittersweet","blue"],["Melancholy","blue"],["Heartbroken","blue"],["Longing","blue"],
-  ["Angry","heat"],["Defiant","heat"],["Restless","heat"],
-  ["Reflective","deep"],["Nostalgic","deep"],["Anxious","deep"],["Dark","deep"]
+// Neither Spotify nor Apple publishes the mood list inside its pitch form, so
+// this is a working default covering the terms that recur across those forms —
+// not a copy of either. She edits it from the Vocabulary sheet; whatever she
+// puts there is what goes into the prompt.
+const FAMILIES = [
+  ["joy","Bright"],["love","Close"],["calm","Open"],
+  ["blue","Blue"],["heat","Heat"],["deep","Deep"],["none","Neutral"]
 ];
-const MOOD_FAM = new Map(MOODS.map(m => [m[0].toLowerCase(), m[1]]));
+const FAM_IDS = new Set(FAMILIES.map(f => f[0]));
 
-const GENRES = [
+const DEFAULT_MOODS = [
+  ["Euphoric","joy"],["Upbeat","joy"],["Joyful","joy"],["Playful","joy"],
+  ["Feel-good","joy"],["Sunny","joy"],["Carefree","joy"],["Triumphant","joy"],
+  ["Romantic","love"],["Sensual","love"],["Tender","love"],["Flirty","love"],
+  ["Devoted","love"],["Intimate","love"],["Sultry","love"],["Sexy","love"],
+  ["Hopeful","calm"],["Dreamy","calm"],["Calm","calm"],["Serene","calm"],
+  ["Warm","calm"],["Uplifting","calm"],["Soothing","calm"],["Chill","calm"],
+  ["Bittersweet","blue"],["Melancholy","blue"],["Heartbroken","blue"],["Longing","blue"],
+  ["Wistful","blue"],["Sombre","blue"],["Aching","blue"],["Lonely","blue"],
+  ["Angry","heat"],["Defiant","heat"],["Restless","heat"],["Fierce","heat"],
+  ["Rebellious","heat"],["Urgent","heat"],["Confident","heat"],["Aggressive","heat"],
+  ["Reflective","deep"],["Nostalgic","deep"],["Anxious","deep"],["Dark","deep"],
+  ["Brooding","deep"],["Haunting","deep"],["Cinematic","deep"],["Tense","deep"]
+];
+
+// Spotify's pitch form takes two moods. Warn past the cap rather than block —
+// her other destinations may allow more.
+const DEFAULT_CAP = 2;
+const ENERGIES = ["Low","Medium","High"];
+const DEFAULT_GENRES = [
   "pop ballad","power ballad","pop","dance-pop","synth-pop","electropop","indie pop",
   "R&B","alt-R&B","contemporary R&B","soul","neo-soul","hip-hop","trap","drill",
   "rock","alt-rock","indie rock","folk","acoustic singer-songwriter","country",
   "latin pop","reggaeton","afrobeats","amapiano","K-pop","J-pop","C-pop","Mandopop",
   "house","EDM","drum & bass","lo-fi","jazz","gospel","classical crossover","metal","punk"
 ];
+
+let vocab = {
+  moods: DEFAULT_MOODS.map(m => ({ name:m[0], fam:m[1] })),
+  genres: DEFAULT_GENRES.slice(),
+  moodCap: DEFAULT_CAP
+};
+let MOOD_FAM = new Map();
+function reindexVocab(){
+  MOOD_FAM = new Map(vocab.moods.map(m => [m.name.toLowerCase(), m.fam]));
+}
+reindexVocab();
 
 /* ------------------------------------------------------------- helpers */
 const $ = id => document.getElementById(id);
@@ -737,15 +850,24 @@ const icon = (name, cls) => {
 const uid = () => "s" + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 const nowIso = () => new Date().toISOString();
 
-function toast(msg, bad){
+function toast(msg, bad, action){
   const box = $("toasts");
-  const t = el("div", "toast" + (bad ? " bad" : ""), msg);
+  const t = el("div", "toast" + (bad ? " bad" : ""));
+  t.appendChild(document.createTextNode(msg));
+  let life = bad ? 4200 : 2600;
+  if (action){
+    const b = el("button", "undo", action.label);
+    b.type = "button";
+    b.addEventListener("click", () => { t.remove(); action.fn(); });
+    t.appendChild(b);
+    life = 10000;
+  }
   box.appendChild(t);
   setTimeout(() => {
     t.style.transition = "opacity .3s ease";
     t.style.opacity = "0";
     setTimeout(() => t.remove(), 320);
-  }, bad ? 4200 : 2600);
+  }, life);
 }
 
 async function copyText(text){
@@ -806,6 +928,7 @@ function normalise(s){
     title: s.title || "", artist: s.artist || "",
     lyrics: s.lyrics || "", lyricLanguage: s.lyricLanguage || "",
     genre: s.genre || "",
+    energy: ENERGIES.indexOf(s.energy) > -1 ? s.energy : "",
     moods: Array.isArray(s.moods) ? s.moods.slice() : [],
     themes: Array.isArray(s.themes) ? s.themes.slice() : [],
     description: s.description || "",
@@ -814,6 +937,15 @@ function normalise(s){
     versions: Array.isArray(s.versions) ? s.versions.slice(0,12) : [],
     createdAt: s.createdAt || nowIso(), updatedAt: s.updatedAt || s.createdAt || nowIso()
   };
+}
+
+// An empty snapshot is only trusted once this session has already seen a real
+// one. Otherwise a failed read — lost access, a bad account, a server hiccup —
+// would overwrite the backup with nothing, at exactly the moment it is needed.
+let seenSnapshot = false;
+function mirrorLocal(rows){
+  if (rows.length){ seenSnapshot = true; saveLocal(rows); return; }
+  if (seenSnapshot) saveLocal(rows);
 }
 
 function loadLocal(){
@@ -845,15 +977,23 @@ async function initStore(){
       snap => {
         store.songs = snap.docs.map(d => normalise(Object.assign({ id:d.id }, d.data() || {})));
         if (!migrateChecked) migrateLocalUp();
-        else saveLocal(store.songs);
+        else mirrorLocal(store.songs);
         renderLibrary();
       },
-      () => setStoreMode("offline — using this browser")
+      () => {
+        // Relabelling alone would leave every later save routed at a database
+        // that is not answering. Drop to local so her work still lands.
+        store.mode = "local";
+        setStoreMode("offline — saving to this browser");
+        store.songs = loadLocal();
+        renderLibrary();
+      }
     );
   } catch(e){
     store.mode = "local"; store.db = null; setStoreMode("this browser only");
   }
   loadHouseFromDb();
+  loadVocabFromDb();
 }
 
 async function migrateLocalUp(){
@@ -868,7 +1008,7 @@ async function migrateLocalUp(){
     }
     safeSet(K.migrated, "1");
   } catch(e){ /* nothing to do */ }
-  saveLocal(store.songs);
+  mirrorLocal(store.songs);
 }
 
 async function persist(song){
@@ -921,6 +1061,7 @@ function collect(){
     lyrics: $("fLyrics").value,
     lang: $("fLang").value,
     genre: $("fGenre").value.trim(),
+    energy: $("fEnergy").value,
     moods: draft.moods.slice(),
     themes: draft.themes.slice(),
     pitch: $("fPitch").value
@@ -932,7 +1073,7 @@ function renderMoods(){
   const box = $("moodPicker");
   box.textContent = "";
   const picked = new Set(draft.moods.map(m => m.toLowerCase()));
-  for (const [name, fam] of MOODS){
+  for (const { name, fam } of vocab.moods){
     const b = el("button", "chip", name);
     b.type = "button";
     b.dataset.fam = fam;
@@ -940,7 +1081,7 @@ function renderMoods(){
     b.addEventListener("click", () => {
       const i = draft.moods.findIndex(m => m.toLowerCase() === name.toLowerCase());
       if (i >= 0) draft.moods.splice(i, 1); else draft.moods.push(name);
-      renderMoods(); refreshPrompt();
+      renderMoods(); refreshPrompt(); markDirty();
     });
     box.appendChild(b);
   }
@@ -951,10 +1092,15 @@ function renderMoods(){
     c.title = "Remove this mood";
     c.addEventListener("click", () => {
       draft.moods = draft.moods.filter(x => x !== m);
-      renderMoods(); refreshPrompt();
+      renderMoods(); refreshPrompt(); markDirty();
     });
     box.appendChild(c);
   }
+  const note = $("moodCapNote");
+  const cap = vocab.moodCap || 0;
+  const over = cap > 0 && draft.moods.length > cap;
+  note.hidden = !over;
+  if (over) note.textContent = draft.moods.length + " picked \u00b7 most pitch forms take " + cap;
 }
 
 function renderThemes(){
@@ -967,7 +1113,7 @@ function renderThemes(){
     c.title = "Remove this theme";
     c.addEventListener("click", () => {
       draft.themes = draft.themes.filter(x => x !== t);
-      renderThemes(); refreshPrompt();
+      renderThemes(); refreshPrompt(); markDirty();
     });
     box.appendChild(c);
   }
@@ -976,16 +1122,16 @@ function renderThemes(){
 function addMood(raw){
   const v = raw.trim();
   if (!v) return;
-  const canon = MOODS.find(m => m[0].toLowerCase() === v.toLowerCase());
-  const name = canon ? canon[0] : v;
+  const canon = vocab.moods.find(m => m.name.toLowerCase() === v.toLowerCase());
+  const name = canon ? canon.name : v;
   if (!draft.moods.some(m => m.toLowerCase() === name.toLowerCase())) draft.moods.push(name);
-  renderMoods(); refreshPrompt();
+  renderMoods(); refreshPrompt(); markDirty();
 }
 function addTheme(raw){
   const v = raw.trim();
   if (!v) return;
   if (!draft.themes.some(t => t.toLowerCase() === v.toLowerCase())) draft.themes.push(v);
-  renderThemes(); refreshPrompt();
+  renderThemes(); refreshPrompt(); markDirty();
 }
 
 /* -------------------------------------------------------------- prompt */
@@ -1002,7 +1148,8 @@ function buildPrompt(){
   L.push("- One paragraph of flowing prose. No heading, no quotation marks around it, no bullet points, no emoji, no hashtags.");
   L.push("- Say what the song is, what it is about and who it is for. Name the hook or the strongest image in the lyrics.");
   L.push("- No superlatives, no comparisons to other artists, nothing you cannot actually hear in the lyrics.");
-  L.push("- MOODS: choose 2 to 4, only from this list — " + MOODS.map(m => m[0]).join(", ") + ".");
+  L.push("- MOODS: choose " + (vocab.moodCap > 1 ? "up to " + vocab.moodCap : "one") +
+    ", only from this list — " + vocab.moods.map(m => m.name).join(", ") + ".");
   L.push("- GENRE: one short phrase, such as \"pop ballad\", \"dance-pop\", \"alt-R&B\", \"acoustic singer-songwriter\".");
   L.push("- THEMES: 3 to 5 short noun phrases.");
   if (house){
@@ -1017,6 +1164,7 @@ function buildPrompt(){
   if (d.lang) L.push("Lyric language: " + d.lang);
   if (d.genre) L.push("Genre the label already has down: " + d.genre);
   if (d.moods.length) L.push("Moods the label already has down: " + d.moods.join(", "));
+  if (d.energy) L.push("Energy: " + d.energy);
   L.push("");
   L.push("LYRICS");
   L.push('"""');
@@ -1068,9 +1216,20 @@ function unwrap(s){
   return t;
 }
 
+// ChatGPT routinely wraps structured output in a ``` fence. Left in place, a
+// fenced JSON reply falls through every branch below and lands whole in the
+// pitch field, and a fenced label block leaks its closing fence into the last
+// field it finds.
+function stripFences(text){
+  const t = text.trim();
+  const whole = t.match(/^```[a-zA-Z0-9_-]*[ \t]*\r?\n([\s\S]*?)\r?\n?```$/);
+  if (whole) return whole[1].trim();
+  return t.replace(/^[ \t]*```[a-zA-Z0-9_-]*[ \t]*$/gm, "").trim();
+}
+
 function parseReply(text){
   const out = { genre:"", moods:[], themes:[], pitch:"" };
-  const raw = text.trim();
+  const raw = stripFences(text);
   if (!raw) return out;
 
   const looksJson = /^[\[{]/.test(raw);
@@ -1290,7 +1449,7 @@ function libraryRows(){
   if (status) rows = rows.filter(s => s.status === status);
   if (q) rows = rows.filter(s =>
     (s.title + " " + s.artist + " " + s.description + " " + s.genre + " " +
-     s.moods.join(" ") + " " + s.themes.join(" ")).toLowerCase().indexOf(q) !== -1);
+     s.moods.join(" ") + " " + s.themes.join(" ") + " " + s.lyrics).toLowerCase().indexOf(q) !== -1);
 
   if (sort === "title") rows.sort((a,b) => (a.title||"~").localeCompare(b.title||"~"));
   else if (sort === "artist") rows.sort((a,b) => (a.artist||"~").localeCompare(b.artist||"~"));
@@ -1340,6 +1499,7 @@ function entryNode(s){
   const chars = el("span", s.description.length > LIMIT ? "over" : null,
     s.description.length + "/" + LIMIT);
   meta.appendChild(chars);
+  if (s.energy) meta.appendChild(el("span", null, s.energy.toLowerCase() + " energy"));
   if (s.pitchDeadline) meta.appendChild(el("span", null, "due " + fmtDate(s.pitchDeadline)));
   if (s.releaseDate) meta.appendChild(el("span", null, "out " + fmtDate(s.releaseDate)));
   meta.appendChild(el("span", null, "edited " + fmtDate(s.updatedAt)));
@@ -1375,10 +1535,17 @@ function entryNode(s){
     const yes = el("button", "btn danger sm", "Delete for good");
     yes.type = "button";
     yes.addEventListener("click", async () => {
+      const backup = normalise(s);
       try {
         await removeSong(s.id);
         if (draft.id === s.id){ draft.id = null; setEditing(false); }
-        toast("Deleted");
+        toast("Deleted \u201c" + (s.title || "untitled") + "\u201d", false, {
+          label: "Undo",
+          fn: async () => {
+            try { await persist(backup); renderLibrary(); toast("Put back"); }
+            catch(e){ toast(dbError(e, "put that back"), true); }
+          }
+        });
       } catch(e){ toast(dbError(e, "delete"), true); }
     });
     const no = el("button", "btn ghost sm", "Keep");
@@ -1458,6 +1625,35 @@ function renderVersions(){
 }
 
 function loadIntoDesk(s){
+  const snap = deskSnapshot();
+  if (deskDirty && !deskEmpty(snap) && draft.id !== s.id){
+    openSheet((sheet, close) => {
+      sheet.appendChild(el("h2", null, "There is unsaved work on the desk"));
+      sheet.appendChild(el("p", null,
+        (snap.title ? "\u201c" + snap.title + "\u201d has" : "The desk has") +
+        " changes that are not in the library. Opening " +
+        (s.title ? "\u201c" + s.title + "\u201d" : "another song") + " replaces them."));
+      const row = el("div", "actions");
+      const first = el("button", "btn primary", "Save, then open");
+      first.type = "button";
+      first.addEventListener("click", async () => {
+        close(); await saveCurrent(); reallyLoad(s);
+      });
+      const discard = el("button", "btn danger", "Discard and open");
+      discard.type = "button";
+      discard.addEventListener("click", () => { close(); reallyLoad(s); });
+      const cancel = el("button", "btn ghost", "Stay here");
+      cancel.type = "button";
+      cancel.addEventListener("click", close);
+      row.appendChild(first); row.appendChild(discard); row.appendChild(cancel);
+      sheet.appendChild(row);
+    });
+    return;
+  }
+  reallyLoad(s);
+}
+
+function reallyLoad(s){
   draft.id = s.id;
   draft.moods = s.moods.slice();
   draft.themes = s.themes.slice();
@@ -1468,6 +1664,7 @@ function loadIntoDesk(s){
   $("fLyrics").value = s.lyrics;
   $("fLang").value = s.lyricLanguage || "";
   $("fGenre").value = s.genre;
+  $("fEnergy").value = s.energy || "";
   $("fPitch").value = s.description;
   $("fStatus").value = s.status;
   $("fRelease").value = s.releaseDate || "";
@@ -1476,6 +1673,7 @@ function loadIntoDesk(s){
   renderMoods(); renderThemes(); renderVersions();
   updateMeter(); updateLyricCount(); refreshPrompt();
   setEditing(true); renderLibrary();
+  deskDirty = false; saveDesk();
   showPane("compose");
   window.scrollTo({ top: 0, behavior: "smooth" });
   toast("Opened " + (s.title || "that song"));
@@ -1485,7 +1683,8 @@ function resetDesk(){
   draft.id = null; draft.moods = []; draft.themes = []; draft.versions = []; draft.createdAt = null;
   ["fTitle","fArtist","fLyrics","fGenre","fPitch","fReply","fRelease","fDeadline","fMoodCustom","fThemeInput"]
     .forEach(id => { $(id).value = ""; });
-  $("fLang").value = ""; $("fStatus").value = "draft";
+  $("fLang").value = ""; $("fEnergy").value = ""; $("fStatus").value = "draft";
+  forgetDesk();
   renderMoods(); renderThemes(); renderVersions();
   updateMeter(); updateLyricCount(); refreshPrompt();
   setEditing(false); renderLibrary();
@@ -1507,7 +1706,7 @@ async function saveCurrent(){
   const song = normalise({
     id: draft.id || uid(),
     title: d.title, artist: d.artist, lyrics: d.lyrics, lyricLanguage: d.lang,
-    genre: d.genre, moods: d.moods, themes: d.themes,
+    genre: d.genre, energy: d.energy, moods: d.moods, themes: d.themes,
     description: d.pitch, status: $("fStatus").value,
     releaseDate: $("fRelease").value, pitchDeadline: $("fDeadline").value,
     versions: versions.slice(0, 12),
@@ -1518,6 +1717,7 @@ async function saveCurrent(){
     await persist(song);
     draft.id = song.id; draft.versions = song.versions; draft.createdAt = song.createdAt;
     setEditing(true); renderVersions(); renderLibrary();
+    deskDirty = false; saveDesk();
     toast(existing ? "Updated" : "Saved to the library");
   } catch(e){
     toast(dbError(e), true);
@@ -1530,17 +1730,17 @@ function csvCell(v){
   return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 function toCsv(rows){
-  const head = ["Title","Artist","Genre","Moods","Themes","Pitch","Characters","Status","Release date","Pitch deadline","Last edited"];
+  const head = ["Title","Artist","Genre","Energy","Moods","Themes","Pitch","Characters","Status","Release date","Pitch deadline","Last edited"];
   const body = rows.map(s => [
-    s.title, s.artist, s.genre, s.moods.join("; "), s.themes.join("; "),
+    s.title, s.artist, s.genre, s.energy, s.moods.join("; "), s.themes.join("; "),
     s.description, s.description.length, statusWord(s.status),
     s.releaseDate, s.pitchDeadline, s.updatedAt
   ].map(csvCell).join(","));
   return "﻿" + [head.map(csvCell).join(",")].concat(body).join("\r\n");
 }
 
-async function exportAs(kind){
-  const rows = store.songs.slice();
+async function exportAs(kind, rows){
+  rows = rows || store.songs.slice();
   if (!rows.length){ toast("Nothing to export yet", true); return; }
   const filename = kind === "csv" ? "pitch-440-library.csv" : "pitch-440-library.json";
   const data = kind === "csv" ? toCsv(rows) : JSON.stringify(rows, null, 2);
@@ -1583,21 +1783,46 @@ function openHouse(){
 
 function openExport(){
   openSheet((sheet, close) => {
+    const shown = libraryRows();
+    const filtered = shown.length !== store.songs.length;
+    let scope = filtered ? shown : store.songs.slice();
+
     sheet.appendChild(el("h2", null, "Export the library"));
-    sheet.appendChild(el("p", null,
-      "Take a copy of all " + store.songs.length + " saved song" + (store.songs.length === 1 ? "" : "s") +
-      ". CSV opens in Excel; JSON is the full record, lyrics and older versions included."));
+    const count = el("p", null, "");
+    const setCount = () => {
+      count.textContent = "Taking a copy of " + scope.length + " song" +
+        (scope.length === 1 ? "" : "s") +
+        ". CSV opens in Excel; JSON is the full record, lyrics and older versions included.";
+    };
+    setCount();
+    sheet.appendChild(count);
+
+    if (filtered){
+      const pick = el("div", "vocab-tabs");
+      [["these", "These " + shown.length], ["all", "All " + store.songs.length]].forEach(([id, label], i) => {
+        const b = el("button", i === 0 ? "on" : null, label);
+        b.type = "button";
+        b.addEventListener("click", () => {
+          scope = id === "these" ? shown : store.songs.slice();
+          Array.from(pick.children).forEach(x => x.classList.toggle("on", x === b));
+          setCount();
+        });
+        pick.appendChild(b);
+      });
+      sheet.appendChild(pick);
+    }
+
     const row = el("div", "actions");
     const csv = el("button", "btn primary");
     csv.type = "button";
     csv.appendChild(icon("i-download"));
     csv.appendChild(document.createTextNode("CSV for Excel"));
-    csv.addEventListener("click", () => { close(); exportAs("csv"); });
+    csv.addEventListener("click", () => { close(); exportAs("csv", scope); });
     const json = el("button", "btn");
     json.type = "button";
     json.appendChild(icon("i-download"));
     json.appendChild(document.createTextNode("JSON backup"));
-    json.addEventListener("click", () => { close(); exportAs("json"); });
+    json.addEventListener("click", () => { close(); exportAs("json", scope); });
     const cancel = el("button", "btn ghost", "Cancel");
     cancel.type = "button";
     cancel.addEventListener("click", close);
@@ -1636,15 +1861,423 @@ function showPane(name){
   });
 }
 
+
+/* ------------------------------------------------------- vocabulary */
+function loadVocabLocal(){
+  try {
+    const raw = safeGet(K.vocab);
+    if (raw){
+      const v = JSON.parse(raw);
+      if (v && Array.isArray(v.moods) && v.moods.length){
+        vocab.moods = v.moods
+          .filter(m => m && m.name)
+          .map(m => ({ name:String(m.name), fam: FAM_IDS.has(m.fam) ? m.fam : "none" }));
+      }
+      if (v && Array.isArray(v.genres) && v.genres.length) vocab.genres = v.genres.map(String);
+      if (v && typeof v.moodCap === "number") vocab.moodCap = Math.max(0, Math.min(12, v.moodCap));
+    }
+  } catch(e){ /* keep the defaults */ }
+  reindexVocab();
+}
+
+async function loadVocabFromDb(){
+  if (!store.db) return;
+  try {
+    const snap = await store.db.doc("settings/vocabulary").get();
+    if (snap && snap.exists){
+      const d = snap.data() || {};
+      if (Array.isArray(d.moods) && d.moods.length){
+        vocab.moods = d.moods.filter(m => m && m.name)
+          .map(m => ({ name:String(m.name), fam: FAM_IDS.has(m.fam) ? m.fam : "none" }));
+      }
+      if (Array.isArray(d.genres) && d.genres.length) vocab.genres = d.genres.map(String);
+      if (typeof d.moodCap === "number") vocab.moodCap = Math.max(0, Math.min(12, d.moodCap));
+      safeSet(K.vocab, JSON.stringify(vocab));
+      reindexVocab(); renderMoods(); renderLibrary(); refreshPrompt();
+    }
+  } catch(e){ /* keep whatever is loaded */ }
+}
+
+async function saveVocab(next){
+  vocab = next;
+  safeSet(K.vocab, JSON.stringify(vocab));
+  reindexVocab();
+  if (store.db){ try { await store.db.doc("settings/vocabulary").set(vocab); } catch(e){} }
+  renderMoods(); renderLibrary(); refreshPrompt();
+}
+
+// How many saved songs still use each term. Removing a term never rewrites
+// history, so this is a warning, not a blocker.
+function termUsage(kind){
+  const map = new Map();
+  for (const song of store.songs){
+    const terms = kind === "moods" ? song.moods : (song.genre ? [song.genre] : []);
+    for (const t of terms){
+      const k = String(t).toLowerCase();
+      map.set(k, (map.get(k) || 0) + 1);
+    }
+  }
+  return map;
+}
+
+function parseTermList(text){
+  return text.split(/[,、;|\n]+/)
+    .map(x => x.replace(/^[\s*\-•\d.)]+/, "").trim())
+    .filter(Boolean)
+    .filter((x, i, a) => a.findIndex(y => y.toLowerCase() === x.toLowerCase()) === i);
+}
+
+function openVocab(){
+  let tab = "moods";
+  const work = {
+    moods: vocab.moods.map(m => ({ name:m.name, fam:m.fam })),
+    genres: vocab.genres.slice(),
+    moodCap: vocab.moodCap
+  };
+
+  openSheet((sheet, close) => {
+    sheet.appendChild(el("h2", null, "Vocabulary"));
+    const blurb = el("p", null,
+      "These are the words the prompt offers ChatGPT, so they are the words that come back. " +
+      "The defaults are a starting point, not Spotify's or Apple's list — neither publishes theirs. " +
+      "Open the pitch form you actually submit to, and paste its options in below.");
+    sheet.appendChild(blurb);
+
+    const tabs = el("div", "vocab-tabs");
+    const rows = el("div", "vocab-rows");
+    const capRow = el("div");
+    const pasteWrap = el("div");
+
+    function render(){
+      Array.from(tabs.children).forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+      rows.textContent = "";
+      const usage = termUsage(tab);
+      const list = work[tab];
+
+      list.forEach((item, i) => {
+        const row = el("div", "vocab-row");
+        const name = el("input");
+        name.type = "text";
+        name.value = tab === "moods" ? item.name : item;
+        name.addEventListener("input", () => {
+          if (tab === "moods") work.moods[i].name = name.value;
+          else work.genres[i] = name.value;
+        });
+        row.appendChild(name);
+
+        if (tab === "moods"){
+          const fam = el("select");
+          FAMILIES.forEach(([id, label]) => {
+            const o = document.createElement("option");
+            o.value = id; o.textContent = label;
+            if (id === item.fam) o.selected = true;
+            fam.appendChild(o);
+          });
+          fam.setAttribute("aria-label", "Colour family for " + item.name);
+          fam.addEventListener("change", () => { work.moods[i].fam = fam.value; });
+          row.appendChild(fam);
+        }
+
+        const used = usage.get(String(tab === "moods" ? item.name : item).toLowerCase()) || 0;
+        const usedTag = el("span", "used", used ? "in " + used : "");
+        if (used) usedTag.title = used + " saved song" + (used === 1 ? "" : "s") +
+          " still use this. Removing it here leaves them alone.";
+        row.appendChild(usedTag);
+
+        const up = el("button", "mini", "↑");
+        up.type = "button"; up.setAttribute("aria-label", "Move up");
+        up.disabled = i === 0;
+        up.addEventListener("click", () => {
+          const l = work[tab]; const t = l[i - 1]; l[i - 1] = l[i]; l[i] = t; render();
+        });
+        const down = el("button", "mini", "↓");
+        down.type = "button"; down.setAttribute("aria-label", "Move down");
+        down.disabled = i === list.length - 1;
+        down.addEventListener("click", () => {
+          const l = work[tab]; const t = l[i + 1]; l[i + 1] = l[i]; l[i] = t; render();
+        });
+        const rm = el("button", "mini", "✕");
+        rm.type = "button"; rm.setAttribute("aria-label", "Remove");
+        rm.addEventListener("click", () => { work[tab].splice(i, 1); render(); });
+        row.appendChild(up); row.appendChild(down); row.appendChild(rm);
+        rows.appendChild(row);
+      });
+
+      if (!list.length) rows.appendChild(el("p", null, "Nothing in this list yet."));
+
+      capRow.textContent = "";
+      capRow.hidden = tab !== "moods";
+      if (tab === "moods"){
+        const lab = el("label", "label", "Warn past this many moods (0 turns the warning off)");
+        lab.setAttribute("for", "vocabCap");
+        const cap = el("input");
+        cap.type = "text"; cap.id = "vocabCap"; cap.inputMode = "numeric";
+        cap.value = String(work.moodCap);
+        cap.addEventListener("input", () => {
+          const n = parseInt(cap.value, 10);
+          work.moodCap = isNaN(n) ? 0 : Math.max(0, Math.min(12, n));
+        });
+        capRow.appendChild(lab); capRow.appendChild(cap);
+      }
+    }
+
+    [["moods","Moods"],["genres","Genres"]].forEach(([id, label]) => {
+      const b = el("button", null, label);
+      b.type = "button"; b.dataset.tab = id;
+      b.addEventListener("click", () => { tab = id; render(); });
+      tabs.appendChild(b);
+    });
+
+    sheet.appendChild(tabs);
+    sheet.appendChild(rows);
+    sheet.appendChild(capRow);
+
+    const addRow = el("div", "actions");
+    const add = el("button", "btn sm", "Add a term");
+    add.type = "button";
+    add.addEventListener("click", () => {
+      if (tab === "moods") work.moods.push({ name:"", fam:"none" });
+      else work.genres.push("");
+      render();
+      const inputs = rows.querySelectorAll("input[type=text]");
+      if (inputs.length) inputs[inputs.length - 1].focus();
+    });
+    const reset = el("button", "btn ghost sm", "Reset to default");
+    reset.type = "button";
+    reset.addEventListener("click", () => {
+      if (tab === "moods") work.moods = DEFAULT_MOODS.map(m => ({ name:m[0], fam:m[1] }));
+      else work.genres = DEFAULT_GENRES.slice();
+      render();
+    });
+    addRow.appendChild(add); addRow.appendChild(reset);
+    sheet.appendChild(addRow);
+
+    const pasteLabel = el("label", "label", "Paste a list — commas or one per line");
+    pasteLabel.setAttribute("for", "vocabPaste");
+    const paste = el("textarea");
+    paste.id = "vocabPaste"; paste.rows = 3;
+    paste.placeholder = "Chill, Energetic, Romantic, Sad, Party…";
+    const pasteActions = el("div", "actions");
+    const replace = el("button", "btn sm", "Replace the list");
+    replace.type = "button";
+    replace.addEventListener("click", () => {
+      const terms = parseTermList(paste.value);
+      if (!terms.length){ toast("Nothing to read in that", true); return; }
+      if (tab === "moods") work.moods = terms.map(t => ({ name:t, fam: MOOD_FAM.get(t.toLowerCase()) || "none" }));
+      else work.genres = terms;
+      paste.value = ""; render();
+      toast("Replaced with " + terms.length + " terms");
+    });
+    const append = el("button", "btn ghost sm", "Add to the list");
+    append.type = "button";
+    append.addEventListener("click", () => {
+      const terms = parseTermList(paste.value);
+      if (!terms.length){ toast("Nothing to read in that", true); return; }
+      let added = 0;
+      for (const t of terms){
+        if (tab === "moods"){
+          if (work.moods.some(m => m.name.toLowerCase() === t.toLowerCase())) continue;
+          work.moods.push({ name:t, fam: MOOD_FAM.get(t.toLowerCase()) || "none" });
+        } else {
+          if (work.genres.some(g => g.toLowerCase() === t.toLowerCase())) continue;
+          work.genres.push(t);
+        }
+        added++;
+      }
+      paste.value = ""; render();
+      toast(added ? "Added " + added : "Already had all of those");
+    });
+    pasteActions.appendChild(replace); pasteActions.appendChild(append);
+    pasteWrap.appendChild(pasteLabel);
+    pasteWrap.appendChild(paste);
+    pasteWrap.appendChild(pasteActions);
+    sheet.appendChild(pasteWrap);
+
+    const foot = el("div", "actions");
+    const save = el("button", "btn primary", "Save");
+    save.type = "button";
+    save.addEventListener("click", async () => {
+      const cleanMoods = work.moods
+        .map(m => ({ name:m.name.trim(), fam:m.fam }))
+        .filter(m => m.name)
+        .filter((m, i, a) => a.findIndex(x => x.name.toLowerCase() === m.name.toLowerCase()) === i);
+      const cleanGenres = work.genres
+        .map(g => g.trim()).filter(Boolean)
+        .filter((g, i, a) => a.findIndex(x => x.toLowerCase() === g.toLowerCase()) === i);
+      if (!cleanMoods.length){ toast("Keep at least one mood", true); return; }
+      if (!cleanGenres.length){ toast("Keep at least one genre", true); return; }
+      close();
+      await saveVocab({ moods:cleanMoods, genres:cleanGenres, moodCap:work.moodCap });
+      toast("Vocabulary saved");
+    });
+    const cancel = el("button", "btn ghost", "Cancel");
+    cancel.type = "button";
+    cancel.addEventListener("click", close);
+    foot.appendChild(save); foot.appendChild(cancel);
+    sheet.appendChild(foot);
+
+    render();
+  });
+}
+
+/* ---------------------------------------------------------- combobox */
+// A native <input list> filters its own suggestions against the text already in
+// the box, so once a genre is chosen the only suggestion left is that genre.
+// This keeps the full list one click away no matter what is typed.
+function enhanceCombo(input, itemsFn, onPick){
+  const wrap = el("div", "combo");
+  input.parentNode.insertBefore(wrap, input);
+  wrap.appendChild(input);
+  const tog = el("button", "combo-toggle");
+  tog.type = "button";
+  tog.setAttribute("aria-label", "Show every option");
+  tog.appendChild(icon("i-chevron"));
+  wrap.appendChild(tog);
+
+  let list = null, idx = -1, items = [], showingAll = false;
+
+  function close(){
+    if (list){ list.remove(); list = null; }
+    idx = -1; showingAll = false;
+    input.setAttribute("aria-expanded", "false");
+  }
+  function mark(){
+    if (!list) return;
+    Array.from(list.children).forEach((li, i) =>
+      li.setAttribute("aria-selected", i === idx ? "true" : "false"));
+    const cur = list.children[idx];
+    if (cur && cur.scrollIntoView) cur.scrollIntoView({ block:"nearest" });
+  }
+  function open(filter, forceAll){
+    showingAll = !!forceAll;
+    const q = forceAll ? "" : (filter || "").trim().toLowerCase();
+    const every = itemsFn();
+    items = q ? every.filter(x => x.toLowerCase().indexOf(q) !== -1) : every.slice();
+    if (!list){
+      list = el("ul", "combo-list");
+      list.setAttribute("role", "listbox");
+      wrap.appendChild(list);
+    }
+    list.textContent = "";
+    if (!items.length){
+      list.appendChild(el("li", "none", "Nothing matches — press enter to use what you typed"));
+      idx = -1;
+    } else {
+      items.forEach((it, i) => {
+        const li = el("li", null, it);
+        li.setAttribute("role", "option");
+        li.setAttribute("aria-selected", i === idx ? "true" : "false");
+        li.addEventListener("mousedown", e => { e.preventDefault(); close(); onPick(it); });
+        list.appendChild(li);
+      });
+    }
+    input.setAttribute("aria-expanded", "true");
+  }
+
+  // The chevron always means "show me everything" — otherwise, with the list
+  // already open and filtered by what has been typed, it would just close it
+  // and the other options would still be out of reach.
+  // mousedown, not click: a click would blur the input first and the blur
+  // handler would close the list we just opened.
+  tog.addEventListener("mousedown", e => {
+    e.preventDefault();
+    if (list && showingAll) close();
+    else { open("", true); input.focus(); }
+  });
+  input.addEventListener("input", () => { idx = -1; open(input.value, false); });
+  input.addEventListener("blur", () => setTimeout(close, 130));
+  input.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown"){
+      e.preventDefault();
+      if (!list) open(input.value, false);
+      idx = Math.min(idx + 1, items.length - 1); mark();
+    } else if (e.key === "ArrowUp"){
+      e.preventDefault();
+      idx = Math.max(idx - 1, 0); mark();
+    } else if (e.key === "Enter"){
+      e.preventDefault();
+      const v = (list && idx >= 0 && items[idx]) ? items[idx] : input.value;
+      close();
+      if (v.trim()) onPick(v);
+    } else if (e.key === "Escape"){
+      close();
+    }
+  });
+  input.setAttribute("role", "combobox");
+  input.setAttribute("aria-autocomplete", "list");
+  input.setAttribute("aria-expanded", "false");
+}
+
+/* ------------------------------------------------- work in progress */
+// Nothing on the desk is saved until she presses Save, and on a phone simply
+// switching apps can reload the page. Keep a copy as she types.
+let deskDirty = false;
+let deskTimer = null;
+
+function deskSnapshot(){
+  const d = collect();
+  return {
+    id: draft.id, title:d.title, artist:d.artist, lyrics:d.lyrics, lang:d.lang,
+    genre:d.genre, energy:d.energy, moods:d.moods, themes:d.themes, pitch:d.pitch,
+    status: $("fStatus").value, release: $("fRelease").value, deadline: $("fDeadline").value,
+    versions: draft.versions, createdAt: draft.createdAt
+  };
+}
+function deskEmpty(x){
+  return !(x.title || x.artist || x.genre || x.energy ||
+    (x.lyrics || "").trim() || (x.pitch || "").trim() ||
+    (x.moods || []).length || (x.themes || []).length);
+}
+function saveDesk(){
+  const snap = deskSnapshot();
+  if (deskEmpty(snap)) safeSet(K.desk, "");
+  else safeSet(K.desk, JSON.stringify(snap));
+}
+function markDirty(){
+  deskDirty = true;
+  clearTimeout(deskTimer);
+  deskTimer = setTimeout(saveDesk, 400);
+}
+function forgetDesk(){
+  deskDirty = false;
+  clearTimeout(deskTimer);
+  safeSet(K.desk, "");
+}
+function restoreDesk(){
+  let x = null;
+  try {
+    const raw = safeGet(K.desk);
+    if (!raw) return false;
+    x = JSON.parse(raw);
+  } catch(e){ return false; }
+  if (!x || deskEmpty(x)) return false;
+  draft.id = x.id || null;
+  draft.moods = Array.isArray(x.moods) ? x.moods : [];
+  draft.themes = Array.isArray(x.themes) ? x.themes : [];
+  draft.versions = Array.isArray(x.versions) ? x.versions : [];
+  draft.createdAt = x.createdAt || null;
+  $("fTitle").value = x.title || "";
+  $("fArtist").value = x.artist || "";
+  $("fLyrics").value = x.lyrics || "";
+  $("fLang").value = x.lang || "";
+  $("fGenre").value = x.genre || "";
+  $("fEnergy").value = x.energy || "";
+  $("fPitch").value = x.pitch || "";
+  $("fStatus").value = x.status || "draft";
+  $("fRelease").value = x.release || "";
+  $("fDeadline").value = x.deadline || "";
+  renderMoods(); renderThemes(); renderVersions();
+  updateMeter(); updateLyricCount(); refreshPrompt();
+  setEditing(!!draft.id);
+  return true;
+}
+
 /* ---------------------------------------------------------- wiring */
 ["fTitle","fArtist","fGenre"].forEach(id => $(id).addEventListener("input", refreshPrompt));
 $("fLang").addEventListener("change", refreshPrompt);
 $("fLyrics").addEventListener("input", () => { updateLyricCount(); refreshPrompt(); });
 $("fPitch").addEventListener("input", updateMeter);
 
-$("fMoodCustom").addEventListener("keydown", e => {
-  if (e.key === "Enter"){ e.preventDefault(); addMood(e.target.value); e.target.value = ""; }
-});
 $("fThemeInput").addEventListener("keydown", e => {
   if (e.key === "Enter"){ e.preventDefault(); addTheme(e.target.value); e.target.value = ""; }
 });
@@ -1678,6 +2311,13 @@ $("btnReset").addEventListener("click", confirmReset);
 $("btnHouse").addEventListener("click", openHouse);
 $("btnExport").addEventListener("click", openExport);
 
+$("btnVocab").addEventListener("click", openVocab);
+
+// One delegated pair rather than a listener per field — anything typed or
+// chosen anywhere on the desk counts as unsaved work.
+$("paneCompose").addEventListener("input", markDirty);
+$("paneCompose").addEventListener("change", markDirty);
+
 ["fSearch","fFilter","fSort"].forEach(id => {
   $(id).addEventListener("input", renderLibrary);
   $(id).addEventListener("change", renderLibrary);
@@ -1687,14 +2327,18 @@ document.querySelectorAll(".tabs button").forEach(b => {
 });
 
 /* ------------------------------------------------------------- boot */
-(function fillGenres(){
-  const dl = $("genreList");
-  for (const g of GENRES){
-    const o = document.createElement("option");
-    o.value = g;
-    dl.appendChild(o);
-  }
-})();
+loadVocabLocal();
+
+enhanceCombo($("fGenre"), () => vocab.genres, v => {
+  $("fGenre").value = v;
+  refreshPrompt(); markDirty();
+});
+enhanceCombo(
+  $("fMoodCustom"),
+  () => vocab.moods.map(m => m.name)
+    .filter(n => !draft.moods.some(x => x.toLowerCase() === n.toLowerCase())),
+  v => { addMood(v); $("fMoodCustom").value = ""; }
+);
 
 showPane("compose");
 renderMoods();
@@ -1703,6 +2347,7 @@ renderVersions();
 updateMeter();
 updateLyricCount();
 setEditing(false);
+if (restoreDesk()) toast("Picked up where you left off");
 $("promptPreview").textContent = buildPrompt();
 initStore();
 
@@ -1715,3 +2360,6 @@ initStore();
 
 })();
 </script>
+
+</body>
+</html>

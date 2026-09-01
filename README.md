@@ -17,4 +17,4 @@ own file layers on top of the root one.
 
 | Project | What it is |
 | --- | --- |
-| [`pitch-440`](pitch-440/) | Writes song pitches that have to fit 440 characters, and keeps a searchable library of them. |
+| [`bobas-machine`](bobas-machine/) | Writes song pitches that have to fit 440 characters, and keeps a searchable library of them. |

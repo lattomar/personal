@@ -1,0 +1,2346 @@
+<title>Boba’s Machine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* ---------- tokens ---------- */
+:root{
+  --bg:#FDF2F6; --surface:#FFFFFF; --surface-2:#FBEAF1; --surface-3:#F6DEEA;
+  --ink:#191016; --ink-2:#6B5560; --ink-3:#9A8792;
+  --rule:#F0D8E4; --rule-strong:#E3BDD0;
+  --accent:#E5397F; --accent-ink:#FFFFFF; --accent-soft:#FCE1EC; --accent-deep:#B31E5D;
+  --lilac:#8E5FB8; --lilac-soft:#F1E7F9;
+  --ok:#1F8A5B; --warn:#A96500; --bad:#C42B3F;
+  --ok-soft:#DFF2E8; --warn-soft:#FBEBD2; --bad-soft:#FBDEE1;
+  --shadow:0 1px 2px rgba(25,16,22,.05), 0 10px 28px -16px rgba(25,16,22,.28);
+  --shadow-lift:0 2px 4px rgba(25,16,22,.06), 0 18px 40px -20px rgba(25,16,22,.35);
+  --fam-joy-bg:#FBE8C8;  --fam-joy-fg:#6E4A03;
+  --fam-love-bg:#FBDDE9; --fam-love-fg:#8A2350;
+  --fam-calm-bg:#D3EBE6; --fam-calm-fg:#0F5449;
+  --fam-blue-bg:#DAE3F7; --fam-blue-fg:#22417C;
+  --fam-heat-bg:#FBDCD1; --fam-heat-fg:#8B3316;
+  --fam-deep-bg:#E6DDF7; --fam-deep-fg:#48308C;
+  --fam-none-bg:#F1E9EE; --fam-none-fg:#6B5560;
+  --radius:14px; --radius-sm:9px;
+  --font-display:"Bodoni Moda",Georgia,"Times New Roman",serif;
+  --font-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#141017; --surface:#1E1721; --surface-2:#28202D; --surface-3:#33293A;
+    --ink:#F6E9F0; --ink-2:#B9A6B3; --ink-3:#877383;
+    --rule:#332A39; --rule-strong:#4A3D51;
+    --accent:#FF6FA8; --accent-ink:#2A0A18; --accent-soft:#3A1728; --accent-deep:#FF9BC4;
+    --lilac:#C9A5E8; --lilac-soft:#2E2340;
+    --ok:#4BC48C; --warn:#E5A63C; --bad:#FF7A88;
+    --ok-soft:#153327; --warn-soft:#3A2A0E; --bad-soft:#3F1A20;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -16px rgba(0,0,0,.7);
+    --shadow-lift:0 2px 4px rgba(0,0,0,.5), 0 18px 40px -20px rgba(0,0,0,.8);
+    --fam-joy-bg:#4A390B;  --fam-joy-fg:#F2D493;
+    --fam-love-bg:#4C1E32; --fam-love-fg:#F5B7CE;
+    --fam-calm-bg:#12403A; --fam-calm-fg:#93DACD;
+    --fam-blue-bg:#1E3055; --fam-blue-fg:#AEC7EF;
+    --fam-heat-bg:#522718; --fam-heat-fg:#F3B198;
+    --fam-deep-bg:#322757; --fam-deep-fg:#C7B5F3;
+    --fam-none-bg:#2C2431; --fam-none-fg:#B9A6B3;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141017; --surface:#1E1721; --surface-2:#28202D; --surface-3:#33293A;
+  --ink:#F6E9F0; --ink-2:#B9A6B3; --ink-3:#877383;
+  --rule:#332A39; --rule-strong:#4A3D51;
+  --accent:#FF6FA8; --accent-ink:#2A0A18; --accent-soft:#3A1728; --accent-deep:#FF9BC4;
+  --lilac:#C9A5E8; --lilac-soft:#2E2340;
+  --ok:#4BC48C; --warn:#E5A63C; --bad:#FF7A88;
+  --ok-soft:#153327; --warn-soft:#3A2A0E; --bad-soft:#3F1A20;
+  --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px -16px rgba(0,0,0,.7);
+  --shadow-lift:0 2px 4px rgba(0,0,0,.5), 0 18px 40px -20px rgba(0,0,0,.8);
+  --fam-joy-bg:#4A390B;  --fam-joy-fg:#F2D493;
+  --fam-love-bg:#4C1E32; --fam-love-fg:#F5B7CE;
+  --fam-calm-bg:#12403A; --fam-calm-fg:#93DACD;
+  --fam-blue-bg:#1E3055; --fam-blue-fg:#AEC7EF;
+  --fam-heat-bg:#522718; --fam-heat-fg:#F3B198;
+  --fam-deep-bg:#322757; --fam-deep-fg:#C7B5F3;
+  --fam-none-bg:#2C2431; --fam-none-fg:#B9A6B3;
+}
+
+/* ---------- base ---------- */
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-body); font-size:14px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0; text-wrap:balance}
+button,input,select,textarea{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+
+.mono{font-family:var(--font-mono); font-variant-numeric:tabular-nums}
+.label{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); display:block; margin-bottom:6px;
+}
+
+/* ---------- topbar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:40; background:var(--surface);
+  border-bottom:1px solid var(--rule);
+}
+.topbar-in{
+  max-width:1420px; margin:0 auto; padding:12px 20px 14px;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.brand{display:flex; align-items:center; gap:11px; margin-right:auto}
+.brand .mark{width:34px; height:34px; flex:none; color:var(--accent)}
+.brand h1{
+  font-family:var(--font-display); font-weight:700; font-size:25px;
+  line-height:1.05; letter-spacing:-.01em; white-space:nowrap;
+}
+.brand .tagline{
+  margin:3px 0 0; font-family:var(--font-mono); font-size:10.5px;
+  letter-spacing:.15em; text-transform:uppercase; color:var(--ink-3);
+}
+.topbar-actions{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.count{
+  font-size:11.5px; color:var(--ink-3); padding-right:4px;
+  border-right:1px solid var(--rule); margin-right:2px; padding-block:2px;
+}
+/* scalloped frill under the header — the one flourish */
+.frill{
+  height:7px;
+  background:
+    radial-gradient(circle at 5px 0, var(--surface) 4.6px, transparent 5px) repeat-x 0 0/10px 7px;
+  filter:drop-shadow(0 1px 0 var(--rule));
+  position:relative; z-index:1;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex; align-items:center; gap:7px; cursor:pointer;
+  border:1px solid var(--rule-strong); background:var(--surface);
+  color:var(--ink); padding:7px 13px; border-radius:999px;
+  font-size:13px; font-weight:600; white-space:nowrap;
+  transition:background .13s ease, border-color .13s ease, transform .08s ease;
+}
+.btn:hover{background:var(--surface-2); border-color:var(--accent)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45; cursor:not-allowed; transform:none}
+.btn[disabled]:hover{background:var(--surface); border-color:var(--rule-strong)}
+.btn svg{width:15px; height:15px; flex:none}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.btn.primary:hover{background:var(--accent-deep); border-color:var(--accent-deep)}
+.btn.ghost{border-color:transparent; background:transparent; color:var(--ink-2); font-weight:500}
+.btn.ghost:hover{background:var(--surface-2); color:var(--ink); border-color:transparent}
+.btn.icon{padding:7px; border-radius:999px}
+.btn.icon svg{width:16px; height:16px}
+.btn.sm{padding:5px 10px; font-size:12px}
+.btn.danger{color:var(--bad); border-color:var(--bad)}
+.btn.danger:hover{background:var(--bad-soft); border-color:var(--bad)}
+
+/* ---------- layout ---------- */
+.tabs{
+  display:none; gap:6px; padding:10px 16px 0; max-width:1420px; margin:0 auto;
+}
+.tabs button{
+  flex:1; cursor:pointer; border:1px solid var(--rule); background:var(--surface);
+  color:var(--ink-2); padding:9px; border-radius:999px; font-weight:600; font-size:13px;
+}
+.tabs button.on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+main{
+  max-width:1420px; margin:0 auto; padding:18px 20px 72px;
+  display:grid; grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr); gap:18px; align-items:start;
+}
+.pane{display:flex; flex-direction:column; gap:14px; min-width:0}
+.pane.library{position:sticky; top:86px; max-height:calc(100vh - 106px)}
+
+.card{
+  background:var(--surface); border:1px solid var(--rule);
+  border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
+}
+.card-head{
+  display:flex; align-items:center; gap:9px; padding:13px 16px 0;
+}
+.card-head svg{width:16px; height:16px; color:var(--accent); flex:none}
+.card-head h2{
+  font-family:var(--font-display); font-size:17px; font-weight:700; letter-spacing:-.005em;
+}
+.card-head .hint{
+  margin-left:auto; font-family:var(--font-mono); font-size:10.5px;
+  color:var(--ink-3); letter-spacing:.04em;
+}
+.card-body{padding:13px 16px 16px; display:flex; flex-direction:column; gap:13px}
+.row{display:grid; grid-template-columns:1fr 1fr; gap:11px}
+.row.thirds{grid-template-columns:1fr 1fr 1fr}
+
+input[type=text],input[type=date],input[type=search],select,textarea{
+  width:100%; background:var(--surface-2); color:var(--ink);
+  border:1px solid var(--rule); border-radius:var(--radius-sm);
+  padding:9px 11px; transition:border-color .13s ease, background .13s ease;
+}
+input::placeholder,textarea::placeholder{color:var(--ink-3)}
+input:focus,select:focus,textarea:focus{
+  background:var(--surface); border-color:var(--accent); outline:none;
+  box-shadow:0 0 0 3px var(--accent-soft);
+}
+textarea{resize:vertical; line-height:1.6}
+textarea.lyrics{min-height:190px; font-size:13.5px}
+textarea.reply{min-height:88px; font-size:12.5px; font-family:var(--font-mono)}
+textarea.pitch{min-height:132px; font-size:14.5px; line-height:1.65}
+select{cursor:pointer; -webkit-appearance:none; appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 15px) 50%, calc(100% - 10px) 50%;
+  background-size:5px 5px,5px 5px; background-repeat:no-repeat; padding-right:30px;
+}
+
+.actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.actions .spacer{margin-left:auto}
+
+/* ---------- mood chips ---------- */
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{
+  cursor:pointer; border:1px solid transparent; border-radius:999px;
+  padding:4px 11px; font-size:12.5px; font-weight:600;
+  background:var(--fam-none-bg); color:var(--fam-none-fg);
+  transition:transform .08s ease, box-shadow .13s ease, opacity .13s ease;
+}
+.chip[data-fam=joy]{background:var(--fam-joy-bg); color:var(--fam-joy-fg)}
+.chip[data-fam=love]{background:var(--fam-love-bg); color:var(--fam-love-fg)}
+.chip[data-fam=calm]{background:var(--fam-calm-bg); color:var(--fam-calm-fg)}
+.chip[data-fam=blue]{background:var(--fam-blue-bg); color:var(--fam-blue-fg)}
+.chip[data-fam=heat]{background:var(--fam-heat-bg); color:var(--fam-heat-fg)}
+.chip[data-fam=deep]{background:var(--fam-deep-bg); color:var(--fam-deep-fg)}
+button.chip{opacity:.5; filter:saturate(.5)}
+button.chip:hover{opacity:.8; filter:saturate(.8)}
+button.chip[aria-pressed=true]{
+  opacity:1; filter:none; border-color:currentColor;
+  box-shadow:0 0 0 2px var(--surface), 0 0 0 3px currentColor;
+}
+button.chip:active{transform:translateY(1px)}
+.chip.static{cursor:default}
+.chip .x{margin-left:5px; opacity:.6; font-weight:700}
+.chip.removable{cursor:pointer}
+.chip.removable:hover .x{opacity:1}
+
+/* ---------- character meter ---------- */
+.meter{
+  display:flex; align-items:center; gap:11px; padding:9px 12px;
+  background:var(--surface-2); border:1px solid var(--rule); border-radius:var(--radius-sm);
+}
+.meter .ring{width:38px; height:38px; flex:none; transform:rotate(-90deg)}
+.meter .ring circle{fill:none; stroke-width:4.5; stroke-linecap:round}
+.meter .ring .track{stroke:var(--rule-strong)}
+.meter .ring .fill{stroke:var(--accent); transition:stroke-dashoffset .2s ease, stroke .2s ease}
+.meter .read{display:flex; flex-direction:column; gap:1px; min-width:0}
+.meter .read b{font-family:var(--font-mono); font-size:15px; font-weight:500; letter-spacing:-.01em}
+.meter .read span{font-size:11.5px; color:var(--ink-3)}
+.meter.warn .ring .fill{stroke:var(--warn)} .meter.warn .read b{color:var(--warn)}
+.meter.over .ring .fill{stroke:var(--bad)} .meter.over .read b{color:var(--bad)}
+.meter.over{border-color:var(--bad); background:var(--bad-soft)}
+.meter .meter-actions{margin-left:auto; display:flex; gap:7px; flex-wrap:wrap; justify-content:flex-end}
+
+/* ---------- details rows ---------- */
+details.tuck{border-top:1px dashed var(--rule); padding-top:11px}
+details.tuck>summary{
+  cursor:pointer; list-style:none; font-family:var(--font-mono); font-size:10.5px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3);
+  display:flex; align-items:center; gap:6px;
+}
+details.tuck>summary::-webkit-details-marker{display:none}
+details.tuck>summary::before{content:"+"; font-size:13px; line-height:1}
+details.tuck[open]>summary::before{content:"–"}
+details.tuck>summary:hover{color:var(--accent)}
+details.tuck>.tuck-body{padding-top:12px; display:flex; flex-direction:column; gap:11px}
+pre.prompt{
+  margin:0; max-height:230px; overflow:auto; white-space:pre-wrap; word-break:break-word;
+  background:var(--surface-2); border:1px solid var(--rule); border-radius:var(--radius-sm);
+  padding:11px; font-family:var(--font-mono); font-size:11.5px; color:var(--ink-2); line-height:1.6;
+}
+
+/* ---------- library ---------- */
+.lib-controls{display:flex; gap:8px; flex-wrap:wrap}
+.lib-controls input[type=search]{flex:1 1 150px; min-width:0}
+.lib-controls select{flex:0 1 auto; width:auto; min-width:118px}
+.lib-list{
+  overflow-y:auto; display:flex; flex-direction:column; gap:10px;
+  padding:2px 2px 10px; margin:-2px -2px 0; min-height:0;
+}
+.entry{
+  background:var(--surface); border:1px solid var(--rule); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:13px 14px; display:flex; flex-direction:column; gap:9px;
+  transition:border-color .13s ease, box-shadow .13s ease;
+}
+.entry:hover{border-color:var(--rule-strong); box-shadow:var(--shadow-lift)}
+.entry.editing{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.entry-top{display:flex; align-items:flex-start; gap:9px}
+.entry-id{min-width:0; flex:1}
+.entry-id h3{font-size:15px; font-weight:700; letter-spacing:-.01em; overflow-wrap:anywhere}
+.entry-id p{margin:1px 0 0; font-size:12.5px; color:var(--ink-2); overflow-wrap:anywhere}
+.pill{
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  padding:3px 8px; border-radius:999px; flex:none; font-weight:500;
+}
+.pill.draft{background:var(--fam-none-bg); color:var(--fam-none-fg)}
+.pill.approved{background:var(--ok-soft); color:var(--ok)}
+.pill.sent{background:var(--accent-soft); color:var(--accent-deep)}
+.entry .desc{
+  font-size:13px; line-height:1.6; color:var(--ink-2); margin:0;
+  background:var(--surface-2); border-radius:var(--radius-sm); padding:9px 11px;
+  border-left:2.5px solid var(--accent);
+}
+.entry .desc.empty{color:var(--ink-3); font-style:italic; border-left-color:var(--rule-strong)}
+.entry-meta{
+  display:flex; gap:9px; align-items:center; flex-wrap:wrap;
+  font-family:var(--font-mono); font-size:10.5px; color:var(--ink-3);
+}
+.entry-meta .over{color:var(--bad); font-weight:500}
+.entry-actions{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.entry-actions .spacer{margin-left:auto}
+.empty-state{
+  text-align:center; padding:48px 22px; color:var(--ink-3);
+  border:1.5px dashed var(--rule-strong); border-radius:var(--radius); background:var(--surface);
+}
+.empty-state svg{width:44px; height:44px; color:var(--rule-strong); margin-bottom:10px}
+.empty-state p{margin:0; font-size:13px; max-width:34ch; margin-inline:auto; line-height:1.6}
+.empty-state b{display:block; color:var(--ink-2); font-family:var(--font-display); font-size:16px; margin-bottom:5px}
+
+/* ---------- notices ---------- */
+.notice{
+  display:flex; gap:9px; align-items:flex-start; padding:10px 12px; border-radius:var(--radius-sm);
+  font-size:12.5px; line-height:1.55; background:var(--lilac-soft); color:var(--ink-2);
+  border:1px solid transparent;
+}
+.notice svg{width:15px; height:15px; flex:none; margin-top:2px; color:var(--lilac)}
+.notice.warn{background:var(--warn-soft); color:var(--warn)} .notice.warn svg{color:var(--warn)}
+.notice b{color:var(--ink)}
+
+/* ---------- overlay ---------- */
+.overlay{
+  position:fixed; inset:0; z-index:100; background:rgba(25,16,22,.5);
+  display:flex; align-items:center; justify-content:center; padding:20px;
+  backdrop-filter:blur(2px);
+}
+.sheet{
+  background:var(--surface); border:1px solid var(--rule-strong); border-radius:var(--radius);
+  box-shadow:var(--shadow-lift); width:min(560px,100%); max-height:86vh; overflow:auto;
+  padding:18px 20px 20px; display:flex; flex-direction:column; gap:13px;
+}
+.sheet h2{font-family:var(--font-display); font-size:19px; font-weight:700}
+.sheet p{margin:0; font-size:13px; color:var(--ink-2); line-height:1.6}
+
+/* ---------- toast ---------- */
+.toasts{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+  z-index:200; display:flex; flex-direction:column; gap:8px; align-items:center;
+  pointer-events:none; width:max-content; max-width:calc(100vw - 32px);
+}
+.toast{
+  background:var(--ink); color:var(--bg); padding:9px 15px; border-radius:999px;
+  font-size:12.5px; font-weight:600; box-shadow:var(--shadow-lift);
+  animation:pop .22s ease; text-align:center;
+}
+.toast.bad{background:var(--bad); color:#fff}
+@keyframes pop{from{opacity:0; transform:translateY(9px)}to{opacity:1; transform:none}}
+
+/* ---------- thinking ---------- */
+.thinking{display:inline-flex; gap:3px; align-items:center}
+.thinking i{width:4px; height:4px; border-radius:50%; background:currentColor; animation:blink 1.1s infinite}
+.thinking i:nth-child(2){animation-delay:.16s} .thinking i:nth-child(3){animation-delay:.32s}
+@keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+
+/* ---------- responsive ---------- */
+@media (max-width:960px){
+  main{grid-template-columns:1fr; padding-top:12px}
+  .tabs{display:flex}
+  .pane.library{position:static; max-height:none}
+  .pane[hidden]{display:none}
+  .lib-list{overflow:visible; max-height:none}
+}
+@media (max-width:560px){
+  .row,.row.thirds{grid-template-columns:1fr}
+  .topbar-in{padding:11px 14px 12px; gap:10px}
+  main{padding-inline:14px}
+  .brand h1{font-size:19px}
+  .brand .tagline{font-size:9.5px; letter-spacing:.1em}
+  .count{display:none}
+}
+</style>
+<style>
+  svg[data-i]{fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
+  svg[data-i] [data-solid]{fill:currentColor; stroke:none}
+  .topbar{border-bottom:none}
+  .sprite{position:absolute; width:0; height:0; overflow:hidden}
+</style>
+
+<svg class="sprite" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-bow" viewBox="0 0 24 24">
+    <path d="M12 12.6C9.6 9.4 7.3 7.2 5.3 7.2c-1.7 0-2.8 1.3-2.8 3.1 0 2.6 2.6 4.8 6.4 5.4"/>
+    <path d="M12 12.6c2.4-3.2 4.7-5.4 6.7-5.4 1.7 0 2.8 1.3 2.8 3.1 0 2.6-2.6 4.8-6.4 5.4"/>
+    <path d="M10.4 16.4 8.8 21.2M13.6 16.4l1.6 4.8"/>
+    <circle cx="12" cy="13.4" r="1.9" data-solid/>
+  </symbol>
+  <symbol id="i-cassette" viewBox="0 0 24 24">
+    <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/>
+    <circle cx="8.5" cy="11" r="2.2"/><circle cx="15.5" cy="11" r="2.2"/>
+    <path d="M8.5 15.6h7M6.5 19.5l1.6-2.6M17.5 19.5l-1.6-2.6"/>
+  </symbol>
+  <symbol id="i-send" viewBox="0 0 24 24">
+    <path d="M21 3 10.5 13.5M21 3l-6.6 18-3.9-7.5L3 9.6 21 3Z"/>
+  </symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24">
+    <path d="M3 11.3V4.5A1.5 1.5 0 0 1 4.5 3h6.8a2 2 0 0 1 1.4.6l7.7 7.7a2 2 0 0 1 0 2.8l-6.8 6.8a2 2 0 0 1-2.8 0L3.6 13.2a2 2 0 0 1-.6-1.9Z"/>
+    <circle cx="7.8" cy="7.8" r="1.4" data-solid/>
+  </symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24">
+    <path d="M16.4 3.4a2.7 2.7 0 0 1 3.8 3.8L8.3 19.1l-4.3.9.9-4.3L16.4 3.4Z"/>
+    <path d="m14.5 5.3 4.2 4.2"/>
+  </symbol>
+  <symbol id="i-vinyl" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>
+    <circle cx="12" cy="12" r="1.1" data-solid/>
+  </symbol>
+  <symbol id="i-note" viewBox="0 0 24 24">
+    <circle cx="6.5" cy="18" r="2.8"/><circle cx="17.5" cy="15.5" r="2.8"/>
+    <path d="M9.3 18V6.2l11-2.4v11.7M9.3 9.4l11-2.4"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24">
+    <path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1Z"/>
+  </symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="4.2"/>
+    <path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/>
+  </symbol>
+  <symbol id="i-star" viewBox="0 0 24 24">
+    <path d="M12 2.6c.9 5 3.5 7.6 8.5 8.5-5 .9-7.6 3.5-8.5 8.5-.9-5-3.5-7.6-8.5-8.5 5-.9 7.6-3.5 8.5-8.5Z"/>
+  </symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24">
+    <rect x="8.5" y="8.5" width="12" height="12" rx="2.2"/>
+    <path d="M15.5 5.5v-1a2 2 0 0 0-2-2h-8a3 3 0 0 0-3 3v8a2 2 0 0 0 2 2h1"/>
+  </symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24">
+    <path d="M3.5 6.5h17M9.5 6.5V4.8a1.8 1.8 0 0 1 1.8-1.8h1.4a1.8 1.8 0 0 1 1.8 1.8v1.7"/>
+    <path d="M5.8 6.5 6.9 19a2 2 0 0 0 2 1.9h6.2a2 2 0 0 0 2-1.9l1.1-12.5M10.2 10.5v6M13.8 10.5v6"/>
+  </symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24">
+    <path d="M14 3.5h6.5V10M20 4 11 13"/>
+    <path d="M18.5 14.5v4a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2h4"/>
+  </symbol>
+  <symbol id="i-download" viewBox="0 0 24 24">
+    <path d="M12 3v12M7 10.5l5 5 5-5M4 20.5h16"/>
+  </symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24">
+    <path d="M4 20 14.5 9.5M17 3.2c.4 2.2 1.5 3.3 3.7 3.7-2.2.4-3.3 1.5-3.7 3.7-.4-2.2-1.5-3.3-3.7-3.7 2.2-.4 3.3-1.5 3.7-3.7Z"/>
+    <path d="M7.4 3.2c.2 1.2.8 1.8 2 2-1.2.2-1.8.8-2 2-.2-1.2-.8-1.8-2-2 1.2-.2 1.8-.8 2-2Z"/>
+  </symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24">
+    <circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/>
+    <path d="M20 4 8.1 16.4M20 20 8.1 7.6"/>
+  </symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-books" viewBox="0 0 24 24">
+    <path d="M4 4.5h4.5v15H4zM10.5 4.5H15v15h-4.5z"/>
+    <path d="m17.2 5.4 3.6.9-3.1 13.4-3.6-.9"/>
+  </symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24">
+    <path d="M12 20.3s-8.2-4.8-8.2-10.2A4.6 4.6 0 0 1 12 7.4a4.6 4.6 0 0 1 8.2 2.7c0 5.4-8.2 10.2-8.2 10.2Z"/>
+  </symbol>
+</defs></svg>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <svg data-i class="mark" aria-hidden="true"><use href="#i-bow"/></svg>
+      <div>
+        <h1>Boba’s Machine</h1>
+        <p class="tagline">440-character song pitches</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="count mono" id="libCount">no songs yet</span>
+      <button class="btn ghost sm" id="btnVocab"><svg data-i aria-hidden="true"><use href="#i-tag"/></svg>Vocabulary</button>
+      <button class="btn ghost sm" id="btnHouse"><svg data-i aria-hidden="true"><use href="#i-star"/></svg>House style</button>
+      <button class="btn ghost sm" id="btnExport"><svg data-i aria-hidden="true"><use href="#i-download"/></svg>Export</button>
+      <button class="btn icon" id="btnTheme" aria-label="Switch between light and dark"><svg data-i aria-hidden="true"><use href="#i-moon"/></svg></button>
+    </div>
+  </div>
+  <div class="frill" aria-hidden="true"></div>
+</div>
+
+<nav class="tabs" aria-label="Sections">
+  <button type="button" data-pane="compose" class="on" aria-pressed="true">Compose</button>
+  <button type="button" data-pane="library" aria-pressed="false">Library <span id="tabCount" class="mono"></span></button>
+</nav>
+
+<main>
+  <section class="pane compose" id="paneCompose" aria-label="Compose a pitch">
+
+    <div class="card">
+      <div class="card-head">
+        <svg data-i aria-hidden="true"><use href="#i-cassette"/></svg>
+        <h2>The song</h2>
+        <span class="hint">step 1</span>
+      </div>
+      <div class="card-body">
+        <div class="row thirds">
+          <div>
+            <label class="label" for="fTitle">Song title</label>
+            <input id="fTitle" type="text" placeholder="Untitled" autocomplete="off">
+          </div>
+          <div>
+            <label class="label" for="fArtist">Artist</label>
+            <input id="fArtist" type="text" placeholder="Unknown artist" autocomplete="off">
+          </div>
+          <div>
+            <label class="label" for="fLang">Lyric language</label>
+            <select id="fLang">
+              <option value="">Let it work it out</option>
+              <option>English</option><option>Korean</option><option>Japanese</option>
+              <option>Mandarin</option><option>Cantonese</option><option>Spanish</option>
+              <option>Portuguese</option><option>French</option><option>German</option>
+              <option>Bahasa Indonesia</option><option>Bahasa Malaysia</option>
+              <option>Thai</option><option>Tagalog</option><option>Hindi</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="label" for="fLyrics">Lyrics</label>
+          <textarea id="fLyrics" class="lyrics" placeholder="Paste the lyrics here. Any language &mdash; the pitch always comes back in English." spellcheck="false"></textarea>
+          <div class="entry-meta" style="margin-top:7px">
+            <span id="lyricCount">empty</span>
+            <span class="spacer" style="margin-left:auto"></span>
+            <button class="btn ghost sm" type="button" id="btnClearLyrics">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg data-i aria-hidden="true"><use href="#i-send"/></svg>
+        <h2>Ask for the pitch</h2>
+        <span class="hint">step 2</span>
+      </div>
+      <div class="card-body">
+        <div class="notice">
+          <svg data-i aria-hidden="true"><use href="#i-star"/></svg>
+          <span>One prompt asks for <b>everything at once</b> &mdash; genre, mood, themes and the 440-character pitch. Run it in ChatGPT, paste the whole reply back below, and every field fills itself.</span>
+        </div>
+        <div class="actions">
+          <button class="btn primary" type="button" id="btnOpenGpt"><svg data-i aria-hidden="true"><use href="#i-external"/></svg>Open in ChatGPT</button>
+          <button class="btn" type="button" id="btnCopyPrompt"><svg data-i aria-hidden="true"><use href="#i-copy"/></svg>Copy prompt</button>
+          <button class="btn" type="button" id="btnWriteHere" hidden><svg data-i aria-hidden="true"><use href="#i-wand"/></svg>Write it here</button>
+          <button class="btn danger sm" type="button" id="btnStop" hidden>Stop</button>
+          <span id="genStatus" class="mono" style="font-size:11.5px;color:var(--ink-3)"></span>
+        </div>
+        <details class="tuck">
+          <summary>See the exact prompt</summary>
+          <div class="tuck-body"><pre class="prompt" id="promptPreview"></pre></div>
+        </details>
+        <div>
+          <label class="label" for="fReply">Paste ChatGPT&rsquo;s reply</label>
+          <textarea id="fReply" class="reply" placeholder="Paste the whole reply here, exactly as ChatGPT wrote it." spellcheck="false"></textarea>
+          <div class="actions" style="margin-top:8px">
+            <button class="btn primary" type="button" id="btnFill"><svg data-i aria-hidden="true"><use href="#i-check"/></svg>Fill in from reply</button>
+            <button class="btn ghost sm" type="button" id="btnClearReply">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg data-i aria-hidden="true"><use href="#i-tag"/></svg>
+        <h2>Genre &amp; mood</h2>
+        <span class="hint">step 3</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div>
+            <label class="label" for="fGenre">Genre</label>
+            <input id="fGenre" type="text" placeholder="pop ballad" autocomplete="off">
+          </div>
+          <div>
+            <label class="label" for="fEnergy">Energy</label>
+            <select id="fEnergy">
+              <option value="">Not set</option>
+              <option>Low</option><option>Medium</option><option>High</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="label">Mood <span style="text-transform:none;letter-spacing:0">&mdash; tap to pick, the same words every time</span></label>
+          <div class="chips" id="moodPicker"></div>
+          <p class="cap-note" id="moodCapNote" hidden></p>
+        </div>
+        <div class="row">
+          <div>
+            <label class="label" for="fMoodCustom">Add a mood of your own</label>
+            <input id="fMoodCustom" type="text" placeholder="type, or browse the list" autocomplete="off">
+          </div>
+          <div>
+            <label class="label" for="fThemeInput">Themes</label>
+            <input id="fThemeInput" type="text" placeholder="type and press enter" autocomplete="off">
+          </div>
+        </div>
+        <div class="chips" id="themeChips"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg data-i aria-hidden="true"><use href="#i-pen"/></svg>
+        <h2>The pitch</h2>
+        <span class="hint">step 4</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <label class="label" for="fPitch">440 characters, no more</label>
+          <textarea id="fPitch" class="pitch" placeholder="The finished pitch lands here &mdash; then edit it until it sounds like you."></textarea>
+        </div>
+        <div class="meter" id="pitchMeter">
+          <svg class="ring" viewBox="0 0 44 44" aria-hidden="true">
+            <circle class="track" cx="22" cy="22" r="18"/>
+            <circle class="fill" cx="22" cy="22" r="18" id="meterFill" stroke-dasharray="113.1" stroke-dashoffset="113.1"/>
+          </svg>
+          <div class="read">
+            <b id="meterNum">0 / 440</b>
+            <span id="meterWord">nothing written yet</span>
+          </div>
+          <div class="meter-actions">
+            <button class="btn sm" type="button" id="btnTighten"><svg data-i aria-hidden="true"><use href="#i-scissors"/></svg>Tighten to fit</button>
+            <button class="btn sm" type="button" id="btnCopyPitch"><svg data-i aria-hidden="true"><use href="#i-copy"/></svg>Copy</button>
+          </div>
+        </div>
+
+        <details class="tuck">
+          <summary>Status &amp; dates</summary>
+          <div class="tuck-body">
+            <div class="row thirds">
+              <div>
+                <label class="label" for="fStatus">Status</label>
+                <select id="fStatus">
+                  <option value="draft">Draft</option>
+                  <option value="approved">Approved</option>
+                  <option value="sent">Sent</option>
+                </select>
+              </div>
+              <div>
+                <label class="label" for="fRelease">Release date</label>
+                <input id="fRelease" type="date">
+              </div>
+              <div>
+                <label class="label" for="fDeadline">Pitch deadline</label>
+                <input id="fDeadline" type="date">
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="tuck" id="versionsWrap" hidden>
+          <summary>Earlier versions <span id="versionCount" class="mono"></span></summary>
+          <div class="tuck-body" id="versionList"></div>
+        </details>
+
+        <div class="actions">
+          <button class="btn primary" type="button" id="btnSave"><svg data-i aria-hidden="true"><use href="#i-check"/></svg><span id="saveLabel">Save to library</span></button>
+          <button class="btn" type="button" id="btnNew" hidden><svg data-i aria-hidden="true"><use href="#i-plus"/></svg>Start a new song</button>
+          <span class="spacer"></span>
+          <button class="btn ghost sm" type="button" id="btnReset">Clear the desk</button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="pane library" id="paneLibrary" aria-label="Saved songs">
+    <div class="card" style="display:flex;flex-direction:column;min-height:0;overflow:visible">
+      <div class="card-head">
+        <svg data-i aria-hidden="true"><use href="#i-books"/></svg>
+        <h2>Library</h2>
+        <span class="hint" id="storeMode"></span>
+      </div>
+      <div class="card-body" style="padding-bottom:10px">
+        <div class="lib-controls">
+          <input id="fSearch" type="search" placeholder="Search title, artist or pitch" autocomplete="off">
+          <select id="fFilter" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="draft">Draft</option>
+            <option value="approved">Approved</option>
+            <option value="sent">Sent</option>
+          </select>
+          <select id="fSort" aria-label="Sort">
+            <option value="updated">Last edited</option>
+            <option value="deadline">Deadline first</option>
+            <option value="title">Title A&ndash;Z</option>
+            <option value="artist">Artist A&ndash;Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="lib-list" id="libList"></div>
+  </section>
+</main>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<style>
+  .pane.library{overflow:hidden}
+  .lib-list{flex:1 1 auto}
+  @media (max-width:960px){
+    body[data-pane="compose"] #paneLibrary{display:none}
+    body[data-pane="library"] #paneCompose{display:none}
+  }
+  .version{
+    border:1px solid var(--rule); border-radius:var(--radius-sm); padding:9px 11px;
+    background:var(--surface-2); display:flex; flex-direction:column; gap:6px;
+  }
+  .version p{margin:0; font-size:12.5px; line-height:1.55; color:var(--ink-2)}
+  .version .vmeta{display:flex; gap:8px; align-items:center; font-family:var(--font-mono); font-size:10.5px; color:var(--ink-3)}
+  .version .vmeta .spacer{margin-left:auto}
+
+  .cap-note{
+    margin:8px 0 0; font-family:var(--font-mono); font-size:10.5px;
+    color:var(--warn); letter-spacing:.03em;
+  }
+
+  .combo{position:relative}
+  .combo>input{padding-right:34px}
+  .combo-toggle{
+    position:absolute; right:5px; top:50%; transform:translateY(-50%);
+    background:none; border:0; cursor:pointer; padding:6px; border-radius:7px;
+    color:var(--ink-3); display:flex; align-items:center;
+  }
+  .combo-toggle:hover{background:var(--surface-3); color:var(--ink)}
+  .combo-toggle svg{width:13px; height:13px}
+  .combo-list{
+    position:absolute; z-index:30; left:0; right:0; top:calc(100% + 4px);
+    background:var(--surface); border:1px solid var(--rule-strong);
+    border-radius:var(--radius-sm); box-shadow:var(--shadow-lift);
+    max-height:232px; overflow-y:auto; padding:4px; margin:0; list-style:none;
+  }
+  .combo-list li{padding:7px 10px; border-radius:7px; cursor:pointer; font-size:13.5px}
+  .combo-list li[aria-selected="true"],.combo-list li:hover{background:var(--accent-soft); color:var(--accent-deep)}
+  .combo-list li.none{color:var(--ink-3); font-style:italic; cursor:default}
+  .combo-list li.none:hover{background:transparent; color:var(--ink-3)}
+
+  .vocab-tabs{display:flex; gap:6px}
+  .vocab-tabs button{
+    flex:1; cursor:pointer; padding:7px; border-radius:999px; font-size:13px; font-weight:600;
+    border:1px solid var(--rule); background:var(--surface-2); color:var(--ink-2);
+  }
+  .vocab-tabs button.on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+  .vocab-rows{
+    display:flex; flex-direction:column; gap:6px; max-height:296px;
+    overflow-y:auto; padding:2px; margin:-2px;
+  }
+  .vocab-row{display:flex; gap:6px; align-items:center}
+  .vocab-row>input[type=text]{flex:1; min-width:0}
+  .vocab-row>select{width:auto; min-width:98px; flex:none}
+  .vocab-row .used{
+    font-family:var(--font-mono); font-size:9.5px; color:var(--ink-3);
+    white-space:nowrap; flex:none; min-width:30px; text-align:right;
+  }
+  .vocab-row .mini{
+    flex:none; cursor:pointer; border:1px solid var(--rule); background:var(--surface);
+    color:var(--ink-3); border-radius:7px; padding:6px 8px; line-height:1; font-size:12px;
+  }
+  .vocab-row .mini:hover{border-color:var(--accent); color:var(--accent)}
+  .toast .undo{
+    margin-left:10px; background:none; border:0; color:inherit; cursor:pointer;
+    font:inherit; font-weight:700; text-decoration:underline; padding:0;
+    pointer-events:auto;
+  }
+  .toasts{pointer-events:none}
+</style>
+<script>
+(function(){
+"use strict";
+
+/* ---------------------------------------------------------------- data */
+const LIMIT = 440;
+const LYRIC_CAP = 12000;
+const K = {
+  songs:"pitch440.songs.v1", house:"pitch440.house.v1",
+  theme:"pitch440.theme.v1", migrated:"pitch440.migrated.v1",
+  vocab:"pitch440.vocab.v1", desk:"pitch440.desk.v1"
+};
+
+// Neither Spotify nor Apple publishes the mood list inside its pitch form, so
+// this is a working default covering the terms that recur across those forms —
+// not a copy of either. She edits it from the Vocabulary sheet; whatever she
+// puts there is what goes into the prompt.
+const FAMILIES = [
+  ["joy","Bright"],["love","Close"],["calm","Open"],
+  ["blue","Blue"],["heat","Heat"],["deep","Deep"],["none","Neutral"]
+];
+const FAM_IDS = new Set(FAMILIES.map(f => f[0]));
+
+const DEFAULT_MOODS = [
+  ["Euphoric","joy"],["Upbeat","joy"],["Joyful","joy"],["Playful","joy"],
+  ["Feel-good","joy"],["Sunny","joy"],["Carefree","joy"],["Triumphant","joy"],
+  ["Romantic","love"],["Sensual","love"],["Tender","love"],["Flirty","love"],
+  ["Devoted","love"],["Intimate","love"],["Sultry","love"],["Sexy","love"],
+  ["Hopeful","calm"],["Dreamy","calm"],["Calm","calm"],["Serene","calm"],
+  ["Warm","calm"],["Uplifting","calm"],["Soothing","calm"],["Chill","calm"],
+  ["Bittersweet","blue"],["Melancholy","blue"],["Heartbroken","blue"],["Longing","blue"],
+  ["Wistful","blue"],["Sombre","blue"],["Aching","blue"],["Lonely","blue"],
+  ["Angry","heat"],["Defiant","heat"],["Restless","heat"],["Fierce","heat"],
+  ["Rebellious","heat"],["Urgent","heat"],["Confident","heat"],["Aggressive","heat"],
+  ["Reflective","deep"],["Nostalgic","deep"],["Anxious","deep"],["Dark","deep"],
+  ["Brooding","deep"],["Haunting","deep"],["Cinematic","deep"],["Tense","deep"]
+];
+
+// Spotify's pitch form takes two moods. Warn past the cap rather than block —
+// her other destinations may allow more.
+const DEFAULT_CAP = 2;
+const ENERGIES = ["Low","Medium","High"];
+const DEFAULT_GENRES = [
+  "pop ballad","power ballad","pop","dance-pop","synth-pop","electropop","indie pop",
+  "R&B","alt-R&B","contemporary R&B","soul","neo-soul","hip-hop","trap","drill",
+  "rock","alt-rock","indie rock","folk","acoustic singer-songwriter","country",
+  "latin pop","reggaeton","afrobeats","amapiano","K-pop","J-pop","C-pop","Mandopop",
+  "house","EDM","drum & bass","lo-fi","jazz","gospel","classical crossover","metal","punk"
+];
+
+let vocab = {
+  moods: DEFAULT_MOODS.map(m => ({ name:m[0], fam:m[1] })),
+  genres: DEFAULT_GENRES.slice(),
+  moodCap: DEFAULT_CAP
+};
+let MOOD_FAM = new Map();
+function reindexVocab(){
+  MOOD_FAM = new Map(vocab.moods.map(m => [m.name.toLowerCase(), m.fam]));
+}
+reindexVocab();
+
+/* ------------------------------------------------------------- helpers */
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+};
+const icon = (name, cls) => {
+  const s = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  s.setAttribute("data-i",""); s.setAttribute("aria-hidden","true");
+  if (cls) s.setAttribute("class", cls);
+  const u = document.createElementNS("http://www.w3.org/2000/svg","use");
+  u.setAttribute("href", "#" + name);
+  s.appendChild(u); return s;
+};
+const uid = () => "s" + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const nowIso = () => new Date().toISOString();
+
+function toast(msg, bad, action){
+  const box = $("toasts");
+  const t = el("div", "toast" + (bad ? " bad" : ""));
+  t.appendChild(document.createTextNode(msg));
+  let life = bad ? 4200 : 2600;
+  if (action){
+    const b = el("button", "undo", action.label);
+    b.type = "button";
+    b.addEventListener("click", () => { t.remove(); action.fn(); });
+    t.appendChild(b);
+    life = 10000;
+  }
+  box.appendChild(t);
+  setTimeout(() => {
+    t.style.transition = "opacity .3s ease";
+    t.style.opacity = "0";
+    setTimeout(() => t.remove(), 320);
+  }, life);
+}
+
+async function copyText(text){
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch(e){ /* fall through to the old way */ }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly","");
+    ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none";
+    document.body.appendChild(ta);
+    ta.select(); ta.setSelectionRange(0, ta.value.length);
+    const ok = document.execCommand("copy");
+    ta.remove();
+    return ok;
+  } catch(e){ return false; }
+}
+
+function safeGet(key){ try { return localStorage.getItem(key); } catch(e){ return null; } }
+function safeSet(key, val){ try { localStorage.setItem(key, val); } catch(e){ /* private mode */ } }
+
+function fmtDate(iso){
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d)) return "";
+  return d.toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
+}
+
+/* --------------------------------------------------------------- theme */
+function currentTheme(){
+  const saved = safeGet(K.theme);
+  if (saved === "light" || saved === "dark") return saved;
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme", t);
+  const use = $("btnTheme").querySelector("use");
+  use.setAttribute("href", t === "dark" ? "#i-sun" : "#i-moon");
+}
+applyTheme(currentTheme());
+$("btnTheme").addEventListener("click", () => {
+  const next = currentTheme() === "dark" ? "light" : "dark";
+  safeSet(K.theme, next); applyTheme(next);
+});
+
+/* --------------------------------------------------------------- store */
+const store = { mode:"local", db:null, songs:[] };
+let localSeed = [];
+let migrateChecked = false;
+
+function normalise(s){
+  return {
+    id: s.id || uid(),
+    title: s.title || "", artist: s.artist || "",
+    lyrics: s.lyrics || "", lyricLanguage: s.lyricLanguage || "",
+    genre: s.genre || "",
+    energy: ENERGIES.indexOf(s.energy) > -1 ? s.energy : "",
+    moods: Array.isArray(s.moods) ? s.moods.slice() : [],
+    themes: Array.isArray(s.themes) ? s.themes.slice() : [],
+    description: s.description || "",
+    status: (s.status === "approved" || s.status === "sent") ? s.status : "draft",
+    releaseDate: s.releaseDate || "", pitchDeadline: s.pitchDeadline || "",
+    versions: Array.isArray(s.versions) ? s.versions.slice(0,12) : [],
+    createdAt: s.createdAt || nowIso(), updatedAt: s.updatedAt || s.createdAt || nowIso()
+  };
+}
+
+// An empty snapshot is only trusted once this session has already seen a real
+// one. Otherwise a failed read — lost access, a bad account, a server hiccup —
+// would overwrite the backup with nothing, at exactly the moment it is needed.
+let seenSnapshot = false;
+function mirrorLocal(rows){
+  if (rows.length){ seenSnapshot = true; saveLocal(rows); return; }
+  if (seenSnapshot) saveLocal(rows);
+}
+
+function loadLocal(){
+  try {
+    const raw = safeGet(K.songs);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.map(normalise) : [];
+  } catch(e){ return []; }
+}
+function saveLocal(arr){ safeSet(K.songs, JSON.stringify(arr)); }
+
+function setStoreMode(text){ $("storeMode").textContent = text; }
+
+async function initStore(){
+  localSeed = loadLocal();
+  store.songs = localSeed.slice();
+  renderLibrary();
+  setStoreMode("this browser only");
+
+  let db = null;
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; }
+  catch(e){ db = null; }
+  if (!db) return;
+
+  store.db = db; store.mode = "db";
+  setStoreMode("synced");
+  try {
+    db.collection("songs").onSnapshot(
+      snap => {
+        store.songs = snap.docs.map(d => normalise(Object.assign({ id:d.id }, d.data() || {})));
+        if (!migrateChecked) migrateLocalUp();
+        else mirrorLocal(store.songs);
+        renderLibrary();
+      },
+      () => {
+        // Relabelling alone would leave every later save routed at a database
+        // that is not answering. Drop to local so her work still lands.
+        store.mode = "local";
+        setStoreMode("offline — saving to this browser");
+        store.songs = loadLocal();
+        renderLibrary();
+      }
+    );
+  } catch(e){
+    store.mode = "local"; store.db = null; setStoreMode("this browser only");
+  }
+  loadHouseFromDb();
+  loadVocabFromDb();
+}
+
+async function migrateLocalUp(){
+  migrateChecked = true;
+  try {
+    if (!safeGet(K.migrated) && store.songs.length === 0 && localSeed.length > 0){
+      for (const s of localSeed){
+        const body = Object.assign({}, s); delete body.id;
+        try { await store.db.collection("songs").doc(s.id).set(body); } catch(e){ /* skip one */ }
+      }
+      toast("Moved " + localSeed.length + " saved song" + (localSeed.length === 1 ? "" : "s") + " into sync");
+    }
+    safeSet(K.migrated, "1");
+  } catch(e){ /* nothing to do */ }
+  mirrorLocal(store.songs);
+}
+
+async function persist(song){
+  if (store.mode === "db" && store.db){
+    const body = Object.assign({}, song); delete body.id;
+    await store.db.collection("songs").doc(song.id).set(body);
+    return;
+  }
+  const arr = store.songs.slice();
+  const i = arr.findIndex(s => s.id === song.id);
+  if (i >= 0) arr[i] = song; else arr.unshift(song);
+  store.songs = arr; saveLocal(arr); renderLibrary();
+}
+
+async function removeSong(id){
+  if (store.mode === "db" && store.db){
+    await store.db.collection("songs").doc(id).delete();
+    return;
+  }
+  store.songs = store.songs.filter(s => s.id !== id);
+  saveLocal(store.songs); renderLibrary();
+}
+
+/* --------------------------------------------------------- house style */
+let houseStyle = safeGet(K.house) || "";
+
+async function loadHouseFromDb(){
+  if (!store.db) return;
+  try {
+    const snap = await store.db.doc("settings/house").get();
+    if (snap && snap.exists){
+      const d = snap.data() || {};
+      if (typeof d.text === "string"){ houseStyle = d.text; safeSet(K.house, houseStyle); refreshPrompt(); }
+    }
+  } catch(e){ /* keep the local copy */ }
+}
+async function saveHouse(text){
+  houseStyle = text; safeSet(K.house, text);
+  if (store.db){ try { await store.db.doc("settings/house").set({ text }); } catch(e){} }
+  refreshPrompt();
+}
+
+/* --------------------------------------------------------------- draft */
+const draft = { id:null, moods:[], themes:[], versions:[], createdAt:null };
+
+function collect(){
+  return {
+    title: $("fTitle").value.trim(),
+    artist: $("fArtist").value.trim(),
+    lyrics: $("fLyrics").value,
+    lang: $("fLang").value,
+    genre: $("fGenre").value.trim(),
+    energy: $("fEnergy").value,
+    moods: draft.moods.slice(),
+    themes: draft.themes.slice(),
+    pitch: $("fPitch").value
+  };
+}
+
+/* --------------------------------------------------------- mood/themes */
+function renderMoods(){
+  const box = $("moodPicker");
+  box.textContent = "";
+  const picked = new Set(draft.moods.map(m => m.toLowerCase()));
+  for (const { name, fam } of vocab.moods){
+    const b = el("button", "chip", name);
+    b.type = "button";
+    b.dataset.fam = fam;
+    b.setAttribute("aria-pressed", picked.has(name.toLowerCase()) ? "true" : "false");
+    b.addEventListener("click", () => {
+      const i = draft.moods.findIndex(m => m.toLowerCase() === name.toLowerCase());
+      if (i >= 0) draft.moods.splice(i, 1); else draft.moods.push(name);
+      renderMoods(); refreshPrompt(); markDirty();
+    });
+    box.appendChild(b);
+  }
+  for (const m of draft.moods){
+    if (MOOD_FAM.has(m.toLowerCase())) continue;
+    const c = el("span", "chip removable", m);
+    c.appendChild(el("span", "x", "×"));
+    c.title = "Remove this mood";
+    c.addEventListener("click", () => {
+      draft.moods = draft.moods.filter(x => x !== m);
+      renderMoods(); refreshPrompt(); markDirty();
+    });
+    box.appendChild(c);
+  }
+  const note = $("moodCapNote");
+  const cap = vocab.moodCap || 0;
+  const over = cap > 0 && draft.moods.length > cap;
+  note.hidden = !over;
+  if (over) note.textContent = draft.moods.length + " picked \u00b7 most pitch forms take " + cap;
+}
+
+function renderThemes(){
+  const box = $("themeChips");
+  box.textContent = "";
+  for (const t of draft.themes){
+    const c = el("span", "chip removable", t);
+    c.dataset.fam = "deep";
+    c.appendChild(el("span", "x", "×"));
+    c.title = "Remove this theme";
+    c.addEventListener("click", () => {
+      draft.themes = draft.themes.filter(x => x !== t);
+      renderThemes(); refreshPrompt(); markDirty();
+    });
+    box.appendChild(c);
+  }
+}
+
+function addMood(raw){
+  const v = raw.trim();
+  if (!v) return;
+  const canon = vocab.moods.find(m => m.name.toLowerCase() === v.toLowerCase());
+  const name = canon ? canon.name : v;
+  if (!draft.moods.some(m => m.toLowerCase() === name.toLowerCase())) draft.moods.push(name);
+  renderMoods(); refreshPrompt(); markDirty();
+}
+function addTheme(raw){
+  const v = raw.trim();
+  if (!v) return;
+  if (!draft.themes.some(t => t.toLowerCase() === v.toLowerCase())) draft.themes.push(v);
+  renderThemes(); refreshPrompt(); markDirty();
+}
+
+/* -------------------------------------------------------------- prompt */
+function buildPrompt(){
+  const d = collect();
+  const lyrics = d.lyrics.slice(0, LYRIC_CAP);
+  const house = houseStyle.trim();
+  const L = [];
+  L.push("You are writing a song pitch for a music label. Read the song below and reply in the exact block format at the end.");
+  L.push("");
+  L.push("RULES");
+  L.push("- PITCH must be " + LIMIT + " characters or fewer, counting spaces and punctuation. This is a hard cap on the form it goes into. Count it before you answer and rewrite it shorter if it is over.");
+  L.push("- Write PITCH in English, whatever language the lyrics are in.");
+  L.push("- One paragraph of flowing prose. No heading, no quotation marks around it, no bullet points, no emoji, no hashtags.");
+  L.push("- Say what the song is, what it is about and who it is for. Name the hook or the strongest image in the lyrics.");
+  L.push("- No superlatives, no comparisons to other artists, nothing you cannot actually hear in the lyrics.");
+  L.push("- MOODS: choose " + (vocab.moodCap > 1 ? "up to " + vocab.moodCap : "one") +
+    ", only from this list — " + vocab.moods.map(m => m.name).join(", ") + ".");
+  L.push("- GENRE: one short phrase, such as \"pop ballad\", \"dance-pop\", \"alt-R&B\", \"acoustic singer-songwriter\".");
+  L.push("- THEMES: 3 to 5 short noun phrases.");
+  if (house){
+    L.push("");
+    L.push("HOUSE STYLE — these win over anything above");
+    L.push(house);
+  }
+  L.push("");
+  L.push("SONG");
+  L.push("Title: " + (d.title || "(untitled)"));
+  L.push("Artist: " + (d.artist || "(unknown)"));
+  if (d.lang) L.push("Lyric language: " + d.lang);
+  if (d.genre) L.push("Genre the label already has down: " + d.genre);
+  if (d.moods.length) L.push("Moods the label already has down: " + d.moods.join(", "));
+  if (d.energy) L.push("Energy: " + d.energy);
+  L.push("");
+  L.push("LYRICS");
+  L.push('"""');
+  L.push(lyrics || "(no lyrics given — work from the title and artist alone)");
+  L.push('"""');
+  L.push("");
+  L.push("REPLY IN EXACTLY THIS FORMAT AND NOTHING ELSE");
+  L.push("GENRE: <genre>");
+  L.push("MOODS: <comma separated, from the list above>");
+  L.push("THEMES: <comma separated>");
+  L.push("PITCH: <the pitch, " + LIMIT + " characters or fewer>");
+  L.push("CHARACTERS: <how many characters PITCH actually is>");
+  return L.join("\n");
+}
+
+function shortenPrompt(text){
+  return "Rewrite this song pitch so it is " + LIMIT + " characters or fewer, counting spaces and punctuation. " +
+    "Keep the meaning, the tone and the hook it names. Do not add anything new. " +
+    "Reply with only the rewritten pitch and nothing else.\n\n" +
+    "It is currently " + text.length + " characters, so it needs to lose at least " + (text.length - LIMIT) + ".\n\n" + text;
+}
+
+let promptTimer = null;
+function refreshPrompt(){
+  clearTimeout(promptTimer);
+  promptTimer = setTimeout(() => { $("promptPreview").textContent = buildPrompt(); }, 120);
+}
+
+/* --------------------------------------------------------------- parse */
+const FIELDS = "GENRE|MOODS?|THEMES?|PITCH|DESCRIPTION|CHARACTERS?|CHARACTER COUNT|LENGTH";
+function grabField(text, word){
+  const re = new RegExp(
+    "(?:^|\\n)[ \\t>*_#-]*(?:\\*\\*)?\\s*(?:" + word + ")\\s*(?:\\*\\*)?\\s*[:\\uFF1A]\\s*" +
+    "([\\s\\S]*?)(?=\\n[ \\t>*_#-]*(?:\\*\\*)?\\s*(?:" + FIELDS + ")\\s*(?:\\*\\*)?\\s*[:\\uFF1A]|$)", "i");
+  const m = text.match(re);
+  return m ? m[1].trim() : "";
+}
+function splitList(s){
+  return s.split(/[,、;|\n]+/)
+    .map(x => x.replace(/^[\s*\-•\d.]+/, "").trim())
+    .filter(Boolean)
+    .filter((x, i, a) => a.findIndex(y => y.toLowerCase() === x.toLowerCase()) === i)
+    .slice(0, 10);
+}
+function unwrap(s){
+  let t = s.trim();
+  t = t.replace(/^\*\*|\*\*$/g, "").trim();
+  if (/^["“'].*["”']$/s.test(t)) t = t.slice(1, -1).trim();
+  return t;
+}
+
+// ChatGPT routinely wraps structured output in a ``` fence. Left in place, a
+// fenced JSON reply falls through every branch below and lands whole in the
+// pitch field, and a fenced label block leaks its closing fence into the last
+// field it finds.
+function stripFences(text){
+  const t = text.trim();
+  const whole = t.match(/^```[a-zA-Z0-9_-]*[ \t]*\r?\n([\s\S]*?)\r?\n?```$/);
+  if (whole) return whole[1].trim();
+  return t.replace(/^[ \t]*```[a-zA-Z0-9_-]*[ \t]*$/gm, "").trim();
+}
+
+function parseReply(text){
+  const out = { genre:"", moods:[], themes:[], pitch:"" };
+  const raw = stripFences(text);
+  if (!raw) return out;
+
+  const looksJson = /^[\[{]/.test(raw);
+  if (looksJson){
+    try {
+      const j = JSON.parse(raw);
+      const o = Array.isArray(j) ? (j[0] || {}) : j;
+      out.genre = String(o.genre || o.GENRE || "").trim();
+      const mm = o.moods || o.MOODS || o.mood;
+      const tt = o.themes || o.THEMES || o.theme;
+      out.moods = Array.isArray(mm) ? mm.map(String) : (mm ? splitList(String(mm)) : []);
+      out.themes = Array.isArray(tt) ? tt.map(String) : (tt ? splitList(String(tt)) : []);
+      out.pitch = unwrap(String(o.pitch || o.PITCH || o.description || o.DESCRIPTION || ""));
+      if (out.genre || out.moods.length || out.pitch) return out;
+    } catch(e){ /* not JSON after all */ }
+  }
+
+  out.genre = unwrap(grabField(raw, "GENRE")).split(/\n/)[0].trim();
+  const moods = grabField(raw, "MOODS?");
+  const themes = grabField(raw, "THEMES?");
+  out.moods = moods ? splitList(moods) : [];
+  out.themes = themes ? splitList(themes) : [];
+  const pitch = grabField(raw, "PITCH") || grabField(raw, "DESCRIPTION");
+  out.pitch = pitch ? unwrap(pitch) : "";
+
+  // Nothing structured at all — treat the whole reply as the pitch.
+  if (!out.genre && !out.moods.length && !out.themes.length && !out.pitch){
+    out.pitch = unwrap(raw);
+  }
+  return out;
+}
+
+function applyReply(text){
+  const p = parseReply(text);
+  const filled = [];
+  if (p.genre){ $("fGenre").value = p.genre; filled.push("genre"); }
+  if (p.moods.length){
+    draft.moods = [];
+    p.moods.forEach(addMood);
+    filled.push("mood");
+  }
+  if (p.themes.length){
+    draft.themes = [];
+    p.themes.forEach(addTheme);
+    filled.push("themes");
+  }
+  if (p.pitch){ $("fPitch").value = p.pitch; filled.push("the pitch"); }
+  renderMoods(); renderThemes(); updateMeter(); refreshPrompt();
+
+  if (!filled.length){ toast("Nothing to read in that — paste ChatGPT's whole reply", true); return; }
+  const n = $("fPitch").value.length;
+  if (p.pitch && n > LIMIT) toast("Filled in " + filled.join(", ") + " — but it came back " + (n - LIMIT) + " over", true);
+  else toast("Filled in " + filled.join(", "));
+}
+
+/* -------------------------------------------------------------- meter */
+const RING = 2 * Math.PI * 18;
+function updateMeter(){
+  const text = $("fPitch").value;
+  const n = text.length;
+  const pct = Math.min(1, n / LIMIT);
+  const fill = $("meterFill");
+  fill.setAttribute("stroke-dasharray", RING.toFixed(2));
+  fill.setAttribute("stroke-dashoffset", (RING * (1 - pct)).toFixed(2));
+  $("meterNum").textContent = n + " / " + LIMIT;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  const wordLabel = words + (words === 1 ? " word" : " words");
+  $("meterWord").textContent = n === 0
+    ? "nothing written yet"
+    : (n > LIMIT ? (n - LIMIT) + " over · " + wordLabel
+                 : (LIMIT - n) + " left · " + wordLabel);
+  const m = $("pitchMeter");
+  m.classList.toggle("warn", n > LIMIT * 0.9 && n <= LIMIT);
+  m.classList.toggle("over", n > LIMIT);
+}
+
+function updateLyricCount(){
+  const n = $("fLyrics").value.length;
+  $("lyricCount").textContent = n === 0 ? "empty"
+    : n.toLocaleString() + " characters" + (n > LYRIC_CAP ? " · only the first " + LYRIC_CAP.toLocaleString() + " are sent" : "");
+}
+
+/* --------------------------------------------------------- overlays */
+function openSheet(build){
+  const ov = el("div", "overlay");
+  const sheet = el("div", "sheet");
+  const close = () => { ov.remove(); document.removeEventListener("keydown", onKey); };
+  const onKey = e => { if (e.key === "Escape") close(); };
+  ov.addEventListener("click", e => { if (e.target === ov) close(); });
+  document.addEventListener("keydown", onKey);
+  build(sheet, close);
+  ov.appendChild(sheet);
+  document.body.appendChild(ov);
+  const first = sheet.querySelector("textarea, input, button");
+  if (first) first.focus();
+  return close;
+}
+
+/* ------------------------------------------------------ ChatGPT hand-off */
+function linkFallback(url, prefilled){
+  openSheet((sheet, close) => {
+    sheet.appendChild(el("h2", null, "Open ChatGPT yourself"));
+    sheet.appendChild(el("p", null, prefilled
+      ? "This page could not open a new tab for you. The prompt is on your clipboard — open ChatGPT and paste it."
+      : "The prompt was too long to carry in a link, so it is on your clipboard instead. Open ChatGPT and paste it."));
+    const a = el("a", "btn primary", "Go to ChatGPT");
+    a.href = prefilled ? url : "https://chatgpt.com/";
+    a.target = "_blank"; a.rel = "noopener noreferrer";
+    a.style.textDecoration = "none";
+    a.addEventListener("click", close);
+    const row = el("div", "actions");
+    row.appendChild(a);
+    const cancel = el("button", "btn ghost", "Close");
+    cancel.type = "button"; cancel.addEventListener("click", close);
+    row.appendChild(cancel);
+    sheet.appendChild(row);
+  });
+}
+
+async function handOff(prompt){
+  const copied = await copyText(prompt);
+  const enc = encodeURIComponent(prompt);
+  const prefilled = enc.length <= 6000;
+  const url = prefilled ? "https://chatgpt.com/?q=" + enc : "https://chatgpt.com/";
+  let win = null;
+  try { win = window.open(url, "_blank", "noopener"); } catch(e){ win = null; }
+  if (!win){ linkFallback(url, prefilled && copied); return; }
+  toast(prefilled ? "ChatGPT opened with the prompt in it" : "Prompt copied — paste it into ChatGPT");
+}
+
+/* --------------------------------------------------------------- sample */
+let sampleFn = null;
+let ctl = null;
+
+function sampleError(e){
+  const code = e && e.code;
+  if (code === "not_granted") return "Writing here needs a Claude account — use the ChatGPT buttons instead";
+  if (code === "rate_limited") return "Too many requests just now — give it a minute";
+  if (code === "prompt_too_large") return "Those lyrics are too long — trim them a little";
+  if (code === "invalid_json") return "The reply came back in a shape this could not read";
+  return (e && e.message) ? e.message : "That did not go through";
+}
+
+function setBusy(on, word){
+  $("btnWriteHere").disabled = on;
+  $("btnTighten").disabled = on;
+  $("btnStop").hidden = !on;
+  const s = $("genStatus");
+  s.textContent = "";
+  if (on){
+    s.appendChild(document.createTextNode((word || "Thinking") + " "));
+    const dots = el("span", "thinking");
+    dots.appendChild(el("i")); dots.appendChild(el("i")); dots.appendChild(el("i"));
+    s.appendChild(dots);
+  }
+}
+
+async function writeHere(){
+  if (!sampleFn) return;
+  ctl = new AbortController();
+  setBusy(true, "Thinking");
+  let seen = false;
+  try {
+    const res = await sampleFn(buildPrompt(), {
+      signal: ctl.signal,
+      onText: ({ text }) => {
+        if (!seen){ seen = true; setBusy(true, "Writing"); }
+        $("fReply").value = text;
+      }
+    });
+    $("fReply").value = res.text;
+    applyReply(res.text);
+  } catch(e){
+    if (e && e.text) $("fReply").value = e.text;
+    if (e && e.code === "cancelled") toast("Stopped");
+    else toast(sampleError(e), true);
+  } finally {
+    setBusy(false); ctl = null;
+  }
+}
+
+async function tighten(){
+  const text = $("fPitch").value;
+  if (!text.trim()){ toast("Write or paste a pitch first", true); return; }
+  if (text.length <= LIMIT){ toast("It already fits — " + (LIMIT - text.length) + " characters to spare"); return; }
+  const prompt = shortenPrompt(text);
+  if (!sampleFn){
+    await handOff(prompt);
+    return;
+  }
+  ctl = new AbortController();
+  setBusy(true, "Tightening");
+  try {
+    const res = await sampleFn(prompt, {
+      signal: ctl.signal,
+      onText: ({ text: t }) => { $("fPitch").value = t; updateMeter(); }
+    });
+    $("fPitch").value = unwrap(res.text);
+    updateMeter();
+    const n = $("fPitch").value.length;
+    toast(n <= LIMIT ? "Down to " + n + " characters" : "Still " + (n - LIMIT) + " over — try again", n > LIMIT);
+  } catch(e){
+    if (e && e.code === "cancelled") toast("Stopped");
+    else toast(sampleError(e), true);
+    updateMeter();
+  } finally {
+    setBusy(false); ctl = null;
+  }
+}
+
+/* -------------------------------------------------------------- library */
+function libraryRows(){
+  const q = $("fSearch").value.trim().toLowerCase();
+  const status = $("fFilter").value;
+  const sort = $("fSort").value;
+  let rows = store.songs.slice();
+  if (status) rows = rows.filter(s => s.status === status);
+  if (q) rows = rows.filter(s =>
+    (s.title + " " + s.artist + " " + s.description + " " + s.genre + " " +
+     s.moods.join(" ") + " " + s.themes.join(" ") + " " + s.lyrics).toLowerCase().indexOf(q) !== -1);
+
+  if (sort === "title") rows.sort((a,b) => (a.title||"~").localeCompare(b.title||"~"));
+  else if (sort === "artist") rows.sort((a,b) => (a.artist||"~").localeCompare(b.artist||"~"));
+  else if (sort === "deadline") rows.sort((a,b) => {
+    if (a.pitchDeadline && b.pitchDeadline) return a.pitchDeadline.localeCompare(b.pitchDeadline);
+    if (a.pitchDeadline) return -1;
+    if (b.pitchDeadline) return 1;
+    return (b.updatedAt || "").localeCompare(a.updatedAt || "");
+  });
+  else rows.sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+  return rows;
+}
+
+function statusWord(s){ return s === "approved" ? "Approved" : s === "sent" ? "Sent" : "Draft"; }
+
+function entryNode(s){
+  const card = el("div", "entry" + (s.id === draft.id ? " editing" : ""));
+
+  const top = el("div", "entry-top");
+  const idc = el("div", "entry-id");
+  idc.appendChild(el("h3", null, s.title || "Untitled"));
+  idc.appendChild(el("p", null, s.artist || "Unknown artist"));
+  top.appendChild(idc);
+  top.appendChild(el("span", "pill " + s.status, statusWord(s.status)));
+  card.appendChild(top);
+
+  const desc = el("p", "desc" + (s.description ? "" : " empty"),
+    s.description || "No pitch written yet.");
+  card.appendChild(desc);
+
+  if (s.genre || s.moods.length){
+    const chips = el("div", "chips");
+    if (s.genre){
+      const g = el("span", "chip static", s.genre);
+      chips.appendChild(g);
+    }
+    for (const m of s.moods){
+      const c = el("span", "chip static", m);
+      const fam = MOOD_FAM.get(m.toLowerCase());
+      if (fam) c.dataset.fam = fam;
+      chips.appendChild(c);
+    }
+    card.appendChild(chips);
+  }
+
+  const meta = el("div", "entry-meta");
+  const chars = el("span", s.description.length > LIMIT ? "over" : null,
+    s.description.length + "/" + LIMIT);
+  meta.appendChild(chars);
+  if (s.energy) meta.appendChild(el("span", null, s.energy.toLowerCase() + " energy"));
+  if (s.pitchDeadline) meta.appendChild(el("span", null, "due " + fmtDate(s.pitchDeadline)));
+  if (s.releaseDate) meta.appendChild(el("span", null, "out " + fmtDate(s.releaseDate)));
+  meta.appendChild(el("span", null, "edited " + fmtDate(s.updatedAt)));
+  if (s.versions.length) meta.appendChild(el("span", null, s.versions.length + " older"));
+  card.appendChild(meta);
+
+  const acts = el("div", "entry-actions");
+  const open = el("button", "btn sm", "Open");
+  open.type = "button";
+  open.addEventListener("click", () => loadIntoDesk(s));
+  acts.appendChild(open);
+
+  const cp = el("button", "btn sm");
+  cp.type = "button";
+  cp.appendChild(icon("i-copy"));
+  cp.appendChild(document.createTextNode("Copy pitch"));
+  cp.disabled = !s.description;
+  cp.addEventListener("click", async () => {
+    const ok = await copyText(s.description);
+    toast(ok ? "Pitch copied" : "Could not copy", !ok);
+  });
+  acts.appendChild(cp);
+
+  acts.appendChild(el("span", "spacer"));
+
+  const delWrap = el("span", "entry-actions");
+  const del = el("button", "btn ghost sm");
+  del.type = "button";
+  del.appendChild(icon("i-trash"));
+  del.setAttribute("aria-label", "Delete " + (s.title || "this song"));
+  del.addEventListener("click", () => {
+    delWrap.textContent = "";
+    const yes = el("button", "btn danger sm", "Delete for good");
+    yes.type = "button";
+    yes.addEventListener("click", async () => {
+      const backup = normalise(s);
+      try {
+        await removeSong(s.id);
+        if (draft.id === s.id){ draft.id = null; setEditing(false); }
+        toast("Deleted \u201c" + (s.title || "untitled") + "\u201d", false, {
+          label: "Undo",
+          fn: async () => {
+            try { await persist(backup); renderLibrary(); toast("Put back"); }
+            catch(e){ toast(dbError(e, "put that back"), true); }
+          }
+        });
+      } catch(e){ toast(dbError(e, "delete"), true); }
+    });
+    const no = el("button", "btn ghost sm", "Keep");
+    no.type = "button";
+    no.addEventListener("click", () => renderLibrary());
+    delWrap.appendChild(yes); delWrap.appendChild(no);
+    setTimeout(() => { if (document.body.contains(yes)) renderLibrary(); }, 6000);
+  });
+  delWrap.appendChild(del);
+  acts.appendChild(delWrap);
+
+  card.appendChild(acts);
+  return card;
+}
+
+function renderLibrary(){
+  const list = $("libList");
+  if (!list) return;
+  list.textContent = "";
+  const rows = libraryRows();
+  const total = store.songs.length;
+
+  $("libCount").textContent = total === 0 ? "no songs yet"
+    : total + " song" + (total === 1 ? "" : "s");
+  $("tabCount").textContent = total ? "(" + total + ")" : "";
+
+  if (!rows.length){
+    const empty = el("div", "empty-state");
+    empty.appendChild(icon("i-vinyl"));
+    const p = el("p");
+    p.appendChild(el("b", null, total ? "Nothing matches" : "The library is empty"));
+    p.appendChild(document.createTextNode(total
+      ? "Change the search or the filter to see the rest."
+      : "Write your first pitch and it will sit here, searchable, for as long as you want it."));
+    empty.appendChild(p);
+    list.appendChild(empty);
+    return;
+  }
+  for (const s of rows) list.appendChild(entryNode(s));
+}
+
+function dbError(e, verb){
+  const msg = (e && (e.message || e.code) || "").toString().toLowerCase();
+  if (msg.indexOf("permission") !== -1 || msg.indexOf("denied") !== -1 || msg.indexOf("writer") !== -1){
+    return "You can read this library but not change it — the link needs to be shared with edit access";
+  }
+  return "Could not " + (verb || "save") + " — " + ((e && e.message) || "something went wrong");
+}
+
+/* ---------------------------------------------------------- desk state */
+function setEditing(on){
+  $("saveLabel").textContent = on ? "Save changes" : "Save to library";
+  $("btnNew").hidden = !on;
+}
+
+function renderVersions(){
+  const wrap = $("versionsWrap");
+  const list = $("versionList");
+  list.textContent = "";
+  const vs = draft.versions || [];
+  wrap.hidden = vs.length === 0;
+  $("versionCount").textContent = vs.length ? "(" + vs.length + ")" : "";
+  vs.forEach(v => {
+    const n = el("div", "version");
+    n.appendChild(el("p", null, v.text));
+    const meta = el("div", "vmeta");
+    meta.appendChild(el("span", null, (v.chars != null ? v.chars : v.text.length) + "/" + LIMIT));
+    meta.appendChild(el("span", null, fmtDate(v.savedAt)));
+    meta.appendChild(el("span", "spacer"));
+    const use = el("button", "btn ghost sm", "Put this back");
+    use.type = "button";
+    use.addEventListener("click", () => { $("fPitch").value = v.text; updateMeter(); toast("Restored — save to keep it"); });
+    meta.appendChild(use);
+    n.appendChild(meta);
+    list.appendChild(n);
+  });
+}
+
+function loadIntoDesk(s){
+  const snap = deskSnapshot();
+  if (deskDirty && !deskEmpty(snap) && draft.id !== s.id){
+    openSheet((sheet, close) => {
+      sheet.appendChild(el("h2", null, "There is unsaved work on the desk"));
+      sheet.appendChild(el("p", null,
+        (snap.title ? "\u201c" + snap.title + "\u201d has" : "The desk has") +
+        " changes that are not in the library. Opening " +
+        (s.title ? "\u201c" + s.title + "\u201d" : "another song") + " replaces them."));
+      const row = el("div", "actions");
+      const first = el("button", "btn primary", "Save, then open");
+      first.type = "button";
+      first.addEventListener("click", async () => {
+        close(); await saveCurrent(); reallyLoad(s);
+      });
+      const discard = el("button", "btn danger", "Discard and open");
+      discard.type = "button";
+      discard.addEventListener("click", () => { close(); reallyLoad(s); });
+      const cancel = el("button", "btn ghost", "Stay here");
+      cancel.type = "button";
+      cancel.addEventListener("click", close);
+      row.appendChild(first); row.appendChild(discard); row.appendChild(cancel);
+      sheet.appendChild(row);
+    });
+    return;
+  }
+  reallyLoad(s);
+}
+
+function reallyLoad(s){
+  draft.id = s.id;
+  draft.moods = s.moods.slice();
+  draft.themes = s.themes.slice();
+  draft.versions = s.versions.slice();
+  draft.createdAt = s.createdAt;
+  $("fTitle").value = s.title;
+  $("fArtist").value = s.artist;
+  $("fLyrics").value = s.lyrics;
+  $("fLang").value = s.lyricLanguage || "";
+  $("fGenre").value = s.genre;
+  $("fEnergy").value = s.energy || "";
+  $("fPitch").value = s.description;
+  $("fStatus").value = s.status;
+  $("fRelease").value = s.releaseDate || "";
+  $("fDeadline").value = s.pitchDeadline || "";
+  $("fReply").value = "";
+  renderMoods(); renderThemes(); renderVersions();
+  updateMeter(); updateLyricCount(); refreshPrompt();
+  setEditing(true); renderLibrary();
+  deskDirty = false; saveDesk();
+  showPane("compose");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  toast("Opened " + (s.title || "that song"));
+}
+
+function resetDesk(){
+  draft.id = null; draft.moods = []; draft.themes = []; draft.versions = []; draft.createdAt = null;
+  ["fTitle","fArtist","fLyrics","fGenre","fPitch","fReply","fRelease","fDeadline","fMoodCustom","fThemeInput"]
+    .forEach(id => { $(id).value = ""; });
+  $("fLang").value = ""; $("fEnergy").value = ""; $("fStatus").value = "draft";
+  forgetDesk();
+  renderMoods(); renderThemes(); renderVersions();
+  updateMeter(); updateLyricCount(); refreshPrompt();
+  setEditing(false); renderLibrary();
+}
+
+async function saveCurrent(){
+  const d = collect();
+  if (!d.title && !d.artist && !d.pitch.trim() && !d.lyrics.trim()){
+    toast("Nothing to save yet", true); return;
+  }
+  const existing = draft.id ? store.songs.find(s => s.id === draft.id) : null;
+  const versions = (existing ? existing.versions : draft.versions).slice();
+  if (existing && existing.description && existing.description !== d.pitch){
+    versions.unshift({
+      text: existing.description, chars: existing.description.length,
+      savedAt: existing.updatedAt, source: "edit"
+    });
+  }
+  const song = normalise({
+    id: draft.id || uid(),
+    title: d.title, artist: d.artist, lyrics: d.lyrics, lyricLanguage: d.lang,
+    genre: d.genre, energy: d.energy, moods: d.moods, themes: d.themes,
+    description: d.pitch, status: $("fStatus").value,
+    releaseDate: $("fRelease").value, pitchDeadline: $("fDeadline").value,
+    versions: versions.slice(0, 12),
+    createdAt: existing ? existing.createdAt : (draft.createdAt || nowIso()),
+    updatedAt: nowIso()
+  });
+  try {
+    await persist(song);
+    draft.id = song.id; draft.versions = song.versions; draft.createdAt = song.createdAt;
+    setEditing(true); renderVersions(); renderLibrary();
+    deskDirty = false; saveDesk();
+    toast(existing ? "Updated" : "Saved to the library");
+  } catch(e){
+    toast(dbError(e), true);
+  }
+}
+
+/* --------------------------------------------------------------- export */
+function csvCell(v){
+  const s = v == null ? "" : String(v);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+function toCsv(rows){
+  const head = ["Title","Artist","Genre","Energy","Moods","Themes","Pitch","Characters","Status","Release date","Pitch deadline","Last edited"];
+  const body = rows.map(s => [
+    s.title, s.artist, s.genre, s.energy, s.moods.join("; "), s.themes.join("; "),
+    s.description, s.description.length, statusWord(s.status),
+    s.releaseDate, s.pitchDeadline, s.updatedAt
+  ].map(csvCell).join(","));
+  return "﻿" + [head.map(csvCell).join(",")].concat(body).join("\r\n");
+}
+
+async function exportAs(kind, rows){
+  rows = rows || store.songs.slice();
+  if (!rows.length){ toast("Nothing to export yet", true); return; }
+  const filename = kind === "csv" ? "pitch-440-library.csv" : "pitch-440-library.json";
+  const data = kind === "csv" ? toCsv(rows) : JSON.stringify(rows, null, 2);
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch(e){ dl = null; }
+  if (dl){
+    try { await dl.save({ filename, data }); toast("Saved " + rows.length + " songs"); return; }
+    catch(e){ if (e && e.code === "cancelled") return; }
+  }
+  const ok = await copyText(data);
+  toast(ok ? "No downloads here — the file is on your clipboard" : "Could not export", !ok);
+}
+
+/* ---------------------------------------------------------- sheets */
+function openHouse(){
+  openSheet((sheet, close) => {
+    sheet.appendChild(el("h2", null, "House style"));
+    sheet.appendChild(el("p", null,
+      "Standing instructions added to the bottom of every prompt, so all your pitches sound like they came from the same desk. Saved once and used every time."));
+    const ta = el("textarea");
+    ta.rows = 7;
+    ta.value = houseStyle;
+    ta.placeholder = "e.g. Never compare the artist to anyone else.\nAlways name the hook line.\nBritish spelling.\nNo exclamation marks.";
+    sheet.appendChild(ta);
+    const row = el("div", "actions");
+    const save = el("button", "btn primary", "Save");
+    save.type = "button";
+    save.addEventListener("click", async () => {
+      await saveHouse(ta.value.trim());
+      close();
+      toast(ta.value.trim() ? "House style saved" : "House style cleared");
+    });
+    const cancel = el("button", "btn ghost", "Cancel");
+    cancel.type = "button";
+    cancel.addEventListener("click", close);
+    row.appendChild(save); row.appendChild(cancel);
+    sheet.appendChild(row);
+  });
+}
+
+function openExport(){
+  openSheet((sheet, close) => {
+    const shown = libraryRows();
+    const filtered = shown.length !== store.songs.length;
+    let scope = filtered ? shown : store.songs.slice();
+
+    sheet.appendChild(el("h2", null, "Export the library"));
+    const count = el("p", null, "");
+    const setCount = () => {
+      count.textContent = "Taking a copy of " + scope.length + " song" +
+        (scope.length === 1 ? "" : "s") +
+        ". CSV opens in Excel; JSON is the full record, lyrics and older versions included.";
+    };
+    setCount();
+    sheet.appendChild(count);
+
+    if (filtered){
+      const pick = el("div", "vocab-tabs");
+      [["these", "These " + shown.length], ["all", "All " + store.songs.length]].forEach(([id, label], i) => {
+        const b = el("button", i === 0 ? "on" : null, label);
+        b.type = "button";
+        b.addEventListener("click", () => {
+          scope = id === "these" ? shown : store.songs.slice();
+          Array.from(pick.children).forEach(x => x.classList.toggle("on", x === b));
+          setCount();
+        });
+        pick.appendChild(b);
+      });
+      sheet.appendChild(pick);
+    }
+
+    const row = el("div", "actions");
+    const csv = el("button", "btn primary");
+    csv.type = "button";
+    csv.appendChild(icon("i-download"));
+    csv.appendChild(document.createTextNode("CSV for Excel"));
+    csv.addEventListener("click", () => { close(); exportAs("csv", scope); });
+    const json = el("button", "btn");
+    json.type = "button";
+    json.appendChild(icon("i-download"));
+    json.appendChild(document.createTextNode("JSON backup"));
+    json.addEventListener("click", () => { close(); exportAs("json", scope); });
+    const cancel = el("button", "btn ghost", "Cancel");
+    cancel.type = "button";
+    cancel.addEventListener("click", close);
+    row.appendChild(csv); row.appendChild(json); row.appendChild(cancel);
+    sheet.appendChild(row);
+  });
+}
+
+function confirmReset(){
+  const dirty = $("fTitle").value || $("fArtist").value || $("fLyrics").value || $("fPitch").value;
+  if (!dirty){ resetDesk(); return; }
+  openSheet((sheet, close) => {
+    sheet.appendChild(el("h2", null, "Clear the desk?"));
+    sheet.appendChild(el("p", null, draft.id
+      ? "This only clears the form. The saved copy in the library stays where it is."
+      : "Nothing here has been saved to the library yet, so this will be gone."));
+    const row = el("div", "actions");
+    const yes = el("button", "btn danger", "Clear it");
+    yes.type = "button";
+    yes.addEventListener("click", () => { close(); resetDesk(); toast("Desk cleared"); });
+    const no = el("button", "btn ghost", "Keep working");
+    no.type = "button";
+    no.addEventListener("click", close);
+    row.appendChild(yes); row.appendChild(no);
+    sheet.appendChild(row);
+  });
+}
+
+/* ----------------------------------------------------------- panes */
+function showPane(name){
+  document.body.dataset.pane = name;
+  document.querySelectorAll(".tabs button").forEach(b => {
+    const on = b.dataset.pane === name;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+
+
+/* ------------------------------------------------------- vocabulary */
+function loadVocabLocal(){
+  try {
+    const raw = safeGet(K.vocab);
+    if (raw){
+      const v = JSON.parse(raw);
+      if (v && Array.isArray(v.moods) && v.moods.length){
+        vocab.moods = v.moods
+          .filter(m => m && m.name)
+          .map(m => ({ name:String(m.name), fam: FAM_IDS.has(m.fam) ? m.fam : "none" }));
+      }
+      if (v && Array.isArray(v.genres) && v.genres.length) vocab.genres = v.genres.map(String);
+      if (v && typeof v.moodCap === "number") vocab.moodCap = Math.max(0, Math.min(12, v.moodCap));
+    }
+  } catch(e){ /* keep the defaults */ }
+  reindexVocab();
+}
+
+async function loadVocabFromDb(){
+  if (!store.db) return;
+  try {
+    const snap = await store.db.doc("settings/vocabulary").get();
+    if (snap && snap.exists){
+      const d = snap.data() || {};
+      if (Array.isArray(d.moods) && d.moods.length){
+        vocab.moods = d.moods.filter(m => m && m.name)
+          .map(m => ({ name:String(m.name), fam: FAM_IDS.has(m.fam) ? m.fam : "none" }));
+      }
+      if (Array.isArray(d.genres) && d.genres.length) vocab.genres = d.genres.map(String);
+      if (typeof d.moodCap === "number") vocab.moodCap = Math.max(0, Math.min(12, d.moodCap));
+      safeSet(K.vocab, JSON.stringify(vocab));
+      reindexVocab(); renderMoods(); renderLibrary(); refreshPrompt();
+    }
+  } catch(e){ /* keep whatever is loaded */ }
+}
+
+async function saveVocab(next){
+  vocab = next;
+  safeSet(K.vocab, JSON.stringify(vocab));
+  reindexVocab();
+  if (store.db){ try { await store.db.doc("settings/vocabulary").set(vocab); } catch(e){} }
+  renderMoods(); renderLibrary(); refreshPrompt();
+}
+
+// How many saved songs still use each term. Removing a term never rewrites
+// history, so this is a warning, not a blocker.
+function termUsage(kind){
+  const map = new Map();
+  for (const song of store.songs){
+    const terms = kind === "moods" ? song.moods : (song.genre ? [song.genre] : []);
+    for (const t of terms){
+      const k = String(t).toLowerCase();
+      map.set(k, (map.get(k) || 0) + 1);
+    }
+  }
+  return map;
+}
+
+function parseTermList(text){
+  return text.split(/[,、;|\n]+/)
+    .map(x => x.replace(/^[\s*\-•\d.)]+/, "").trim())
+    .filter(Boolean)
+    .filter((x, i, a) => a.findIndex(y => y.toLowerCase() === x.toLowerCase()) === i);
+}
+
+function openVocab(){
+  let tab = "moods";
+  const work = {
+    moods: vocab.moods.map(m => ({ name:m.name, fam:m.fam })),
+    genres: vocab.genres.slice(),
+    moodCap: vocab.moodCap
+  };
+
+  openSheet((sheet, close) => {
+    sheet.appendChild(el("h2", null, "Vocabulary"));
+    const blurb = el("p", null,
+      "These are the words the prompt offers ChatGPT, so they are the words that come back. " +
+      "The defaults are a starting point, not Spotify's or Apple's list — neither publishes theirs. " +
+      "Open the pitch form you actually submit to, and paste its options in below.");
+    sheet.appendChild(blurb);
+
+    const tabs = el("div", "vocab-tabs");
+    const rows = el("div", "vocab-rows");
+    const capRow = el("div");
+    const pasteWrap = el("div");
+
+    function render(){
+      Array.from(tabs.children).forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+      rows.textContent = "";
+      const usage = termUsage(tab);
+      const list = work[tab];
+
+      list.forEach((item, i) => {
+        const row = el("div", "vocab-row");
+        const name = el("input");
+        name.type = "text";
+        name.value = tab === "moods" ? item.name : item;
+        name.addEventListener("input", () => {
+          if (tab === "moods") work.moods[i].name = name.value;
+          else work.genres[i] = name.value;
+        });
+        row.appendChild(name);
+
+        if (tab === "moods"){
+          const fam = el("select");
+          FAMILIES.forEach(([id, label]) => {
+            const o = document.createElement("option");
+            o.value = id; o.textContent = label;
+            if (id === item.fam) o.selected = true;
+            fam.appendChild(o);
+          });
+          fam.setAttribute("aria-label", "Colour family for " + item.name);
+          fam.addEventListener("change", () => { work.moods[i].fam = fam.value; });
+          row.appendChild(fam);
+        }
+
+        const used = usage.get(String(tab === "moods" ? item.name : item).toLowerCase()) || 0;
+        const usedTag = el("span", "used", used ? "in " + used : "");
+        if (used) usedTag.title = used + " saved song" + (used === 1 ? "" : "s") +
+          " still use this. Removing it here leaves them alone.";
+        row.appendChild(usedTag);
+
+        const up = el("button", "mini", "↑");
+        up.type = "button"; up.setAttribute("aria-label", "Move up");
+        up.disabled = i === 0;
+        up.addEventListener("click", () => {
+          const l = work[tab]; const t = l[i - 1]; l[i - 1] = l[i]; l[i] = t; render();
+        });
+        const down = el("button", "mini", "↓");
+        down.type = "button"; down.setAttribute("aria-label", "Move down");
+        down.disabled = i === list.length - 1;
+        down.addEventListener("click", () => {
+          const l = work[tab]; const t = l[i + 1]; l[i + 1] = l[i]; l[i] = t; render();
+        });
+        const rm = el("button", "mini", "✕");
+        rm.type = "button"; rm.setAttribute("aria-label", "Remove");
+        rm.addEventListener("click", () => { work[tab].splice(i, 1); render(); });
+        row.appendChild(up); row.appendChild(down); row.appendChild(rm);
+        rows.appendChild(row);
+      });
+
+      if (!list.length) rows.appendChild(el("p", null, "Nothing in this list yet."));
+
+      capRow.textContent = "";
+      capRow.hidden = tab !== "moods";
+      if (tab === "moods"){
+        const lab = el("label", "label", "Warn past this many moods (0 turns the warning off)");
+        lab.setAttribute("for", "vocabCap");
+        const cap = el("input");
+        cap.type = "text"; cap.id = "vocabCap"; cap.inputMode = "numeric";
+        cap.value = String(work.moodCap);
+        cap.addEventListener("input", () => {
+          const n = parseInt(cap.value, 10);
+          work.moodCap = isNaN(n) ? 0 : Math.max(0, Math.min(12, n));
+        });
+        capRow.appendChild(lab); capRow.appendChild(cap);
+      }
+    }
+
+    [["moods","Moods"],["genres","Genres"]].forEach(([id, label]) => {
+      const b = el("button", null, label);
+      b.type = "button"; b.dataset.tab = id;
+      b.addEventListener("click", () => { tab = id; render(); });
+      tabs.appendChild(b);
+    });
+
+    sheet.appendChild(tabs);
+    sheet.appendChild(rows);
+    sheet.appendChild(capRow);
+
+    const addRow = el("div", "actions");
+    const add = el("button", "btn sm", "Add a term");
+    add.type = "button";
+    add.addEventListener("click", () => {
+      if (tab === "moods") work.moods.push({ name:"", fam:"none" });
+      else work.genres.push("");
+      render();
+      const inputs = rows.querySelectorAll("input[type=text]");
+      if (inputs.length) inputs[inputs.length - 1].focus();
+    });
+    const reset = el("button", "btn ghost sm", "Reset to default");
+    reset.type = "button";
+    reset.addEventListener("click", () => {
+      if (tab === "moods") work.moods = DEFAULT_MOODS.map(m => ({ name:m[0], fam:m[1] }));
+      else work.genres = DEFAULT_GENRES.slice();
+      render();
+    });
+    addRow.appendChild(add); addRow.appendChild(reset);
+    sheet.appendChild(addRow);
+
+    const pasteLabel = el("label", "label", "Paste a list — commas or one per line");
+    pasteLabel.setAttribute("for", "vocabPaste");
+    const paste = el("textarea");
+    paste.id = "vocabPaste"; paste.rows = 3;
+    paste.placeholder = "Chill, Energetic, Romantic, Sad, Party…";
+    const pasteActions = el("div", "actions");
+    const replace = el("button", "btn sm", "Replace the list");
+    replace.type = "button";
+    replace.addEventListener("click", () => {
+      const terms = parseTermList(paste.value);
+      if (!terms.length){ toast("Nothing to read in that", true); return; }
+      if (tab === "moods") work.moods = terms.map(t => ({ name:t, fam: MOOD_FAM.get(t.toLowerCase()) || "none" }));
+      else work.genres = terms;
+      paste.value = ""; render();
+      toast("Replaced with " + terms.length + " terms");
+    });
+    const append = el("button", "btn ghost sm", "Add to the list");
+    append.type = "button";
+    append.addEventListener("click", () => {
+      const terms = parseTermList(paste.value);
+      if (!terms.length){ toast("Nothing to read in that", true); return; }
+      let added = 0;
+      for (const t of terms){
+        if (tab === "moods"){
+          if (work.moods.some(m => m.name.toLowerCase() === t.toLowerCase())) continue;
+          work.moods.push({ name:t, fam: MOOD_FAM.get(t.toLowerCase()) || "none" });
+        } else {
+          if (work.genres.some(g => g.toLowerCase() === t.toLowerCase())) continue;
+          work.genres.push(t);
+        }
+        added++;
+      }
+      paste.value = ""; render();
+      toast(added ? "Added " + added : "Already had all of those");
+    });
+    pasteActions.appendChild(replace); pasteActions.appendChild(append);
+    pasteWrap.appendChild(pasteLabel);
+    pasteWrap.appendChild(paste);
+    pasteWrap.appendChild(pasteActions);
+    sheet.appendChild(pasteWrap);
+
+    const foot = el("div", "actions");
+    const save = el("button", "btn primary", "Save");
+    save.type = "button";
+    save.addEventListener("click", async () => {
+      const cleanMoods = work.moods
+        .map(m => ({ name:m.name.trim(), fam:m.fam }))
+        .filter(m => m.name)
+        .filter((m, i, a) => a.findIndex(x => x.name.toLowerCase() === m.name.toLowerCase()) === i);
+      const cleanGenres = work.genres
+        .map(g => g.trim()).filter(Boolean)
+        .filter((g, i, a) => a.findIndex(x => x.toLowerCase() === g.toLowerCase()) === i);
+      if (!cleanMoods.length){ toast("Keep at least one mood", true); return; }
+      if (!cleanGenres.length){ toast("Keep at least one genre", true); return; }
+      close();
+      await saveVocab({ moods:cleanMoods, genres:cleanGenres, moodCap:work.moodCap });
+      toast("Vocabulary saved");
+    });
+    const cancel = el("button", "btn ghost", "Cancel");
+    cancel.type = "button";
+    cancel.addEventListener("click", close);
+    foot.appendChild(save); foot.appendChild(cancel);
+    sheet.appendChild(foot);
+
+    render();
+  });
+}
+
+/* ---------------------------------------------------------- combobox */
+// A native <input list> filters its own suggestions against the text already in
+// the box, so once a genre is chosen the only suggestion left is that genre.
+// This keeps the full list one click away no matter what is typed.
+function enhanceCombo(input, itemsFn, onPick){
+  const wrap = el("div", "combo");
+  input.parentNode.insertBefore(wrap, input);
+  wrap.appendChild(input);
+  const tog = el("button", "combo-toggle");
+  tog.type = "button";
+  tog.setAttribute("aria-label", "Show every option");
+  tog.appendChild(icon("i-chevron"));
+  wrap.appendChild(tog);
+
+  let list = null, idx = -1, items = [], showingAll = false;
+
+  function close(){
+    if (list){ list.remove(); list = null; }
+    idx = -1; showingAll = false;
+    input.setAttribute("aria-expanded", "false");
+  }
+  function mark(){
+    if (!list) return;
+    Array.from(list.children).forEach((li, i) =>
+      li.setAttribute("aria-selected", i === idx ? "true" : "false"));
+    const cur = list.children[idx];
+    if (cur && cur.scrollIntoView) cur.scrollIntoView({ block:"nearest" });
+  }
+  function open(filter, forceAll){
+    showingAll = !!forceAll;
+    const q = forceAll ? "" : (filter || "").trim().toLowerCase();
+    const every = itemsFn();
+    items = q ? every.filter(x => x.toLowerCase().indexOf(q) !== -1) : every.slice();
+    if (!list){
+      list = el("ul", "combo-list");
+      list.setAttribute("role", "listbox");
+      wrap.appendChild(list);
+    }
+    list.textContent = "";
+    if (!items.length){
+      list.appendChild(el("li", "none", "Nothing matches — press enter to use what you typed"));
+      idx = -1;
+    } else {
+      items.forEach((it, i) => {
+        const li = el("li", null, it);
+        li.setAttribute("role", "option");
+        li.setAttribute("aria-selected", i === idx ? "true" : "false");
+        li.addEventListener("mousedown", e => { e.preventDefault(); close(); onPick(it); });
+        list.appendChild(li);
+      });
+    }
+    input.setAttribute("aria-expanded", "true");
+  }
+
+  // The chevron always means "show me everything" — otherwise, with the list
+  // already open and filtered by what has been typed, it would just close it
+  // and the other options would still be out of reach.
+  // mousedown, not click: a click would blur the input first and the blur
+  // handler would close the list we just opened.
+  tog.addEventListener("mousedown", e => {
+    e.preventDefault();
+    if (list && showingAll) close();
+    else { open("", true); input.focus(); }
+  });
+  input.addEventListener("input", () => { idx = -1; open(input.value, false); });
+  input.addEventListener("blur", () => setTimeout(close, 130));
+  input.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown"){
+      e.preventDefault();
+      if (!list) open(input.value, false);
+      idx = Math.min(idx + 1, items.length - 1); mark();
+    } else if (e.key === "ArrowUp"){
+      e.preventDefault();
+      idx = Math.max(idx - 1, 0); mark();
+    } else if (e.key === "Enter"){
+      e.preventDefault();
+      const v = (list && idx >= 0 && items[idx]) ? items[idx] : input.value;
+      close();
+      if (v.trim()) onPick(v);
+    } else if (e.key === "Escape"){
+      close();
+    }
+  });
+  input.setAttribute("role", "combobox");
+  input.setAttribute("aria-autocomplete", "list");
+  input.setAttribute("aria-expanded", "false");
+}
+
+/* ------------------------------------------------- work in progress */
+// Nothing on the desk is saved until she presses Save, and on a phone simply
+// switching apps can reload the page. Keep a copy as she types.
+let deskDirty = false;
+let deskTimer = null;
+
+function deskSnapshot(){
+  const d = collect();
+  return {
+    id: draft.id, title:d.title, artist:d.artist, lyrics:d.lyrics, lang:d.lang,
+    genre:d.genre, energy:d.energy, moods:d.moods, themes:d.themes, pitch:d.pitch,
+    status: $("fStatus").value, release: $("fRelease").value, deadline: $("fDeadline").value,
+    versions: draft.versions, createdAt: draft.createdAt
+  };
+}
+function deskEmpty(x){
+  return !(x.title || x.artist || x.genre || x.energy ||
+    (x.lyrics || "").trim() || (x.pitch || "").trim() ||
+    (x.moods || []).length || (x.themes || []).length);
+}
+function saveDesk(){
+  const snap = deskSnapshot();
+  if (deskEmpty(snap)) safeSet(K.desk, "");
+  else safeSet(K.desk, JSON.stringify(snap));
+}
+function markDirty(){
+  deskDirty = true;
+  clearTimeout(deskTimer);
+  deskTimer = setTimeout(saveDesk, 400);
+}
+function forgetDesk(){
+  deskDirty = false;
+  clearTimeout(deskTimer);
+  safeSet(K.desk, "");
+}
+function restoreDesk(){
+  let x = null;
+  try {
+    const raw = safeGet(K.desk);
+    if (!raw) return false;
+    x = JSON.parse(raw);
+  } catch(e){ return false; }
+  if (!x || deskEmpty(x)) return false;
+  draft.id = x.id || null;
+  draft.moods = Array.isArray(x.moods) ? x.moods : [];
+  draft.themes = Array.isArray(x.themes) ? x.themes : [];
+  draft.versions = Array.isArray(x.versions) ? x.versions : [];
+  draft.createdAt = x.createdAt || null;
+  $("fTitle").value = x.title || "";
+  $("fArtist").value = x.artist || "";
+  $("fLyrics").value = x.lyrics || "";
+  $("fLang").value = x.lang || "";
+  $("fGenre").value = x.genre || "";
+  $("fEnergy").value = x.energy || "";
+  $("fPitch").value = x.pitch || "";
+  $("fStatus").value = x.status || "draft";
+  $("fRelease").value = x.release || "";
+  $("fDeadline").value = x.deadline || "";
+  renderMoods(); renderThemes(); renderVersions();
+  updateMeter(); updateLyricCount(); refreshPrompt();
+  setEditing(!!draft.id);
+  return true;
+}
+
+/* ---------------------------------------------------------- wiring */
+["fTitle","fArtist","fGenre"].forEach(id => $(id).addEventListener("input", refreshPrompt));
+$("fLang").addEventListener("change", refreshPrompt);
+$("fLyrics").addEventListener("input", () => { updateLyricCount(); refreshPrompt(); });
+$("fPitch").addEventListener("input", updateMeter);
+
+$("fThemeInput").addEventListener("keydown", e => {
+  if (e.key === "Enter"){ e.preventDefault(); addTheme(e.target.value); e.target.value = ""; }
+});
+
+$("btnCopyPrompt").addEventListener("click", async () => {
+  const ok = await copyText(buildPrompt());
+  toast(ok ? "Prompt copied — paste it into ChatGPT" : "Could not copy the prompt", !ok);
+});
+$("btnOpenGpt").addEventListener("click", () => handOff(buildPrompt()));
+$("btnWriteHere").addEventListener("click", writeHere);
+$("btnStop").addEventListener("click", () => { if (ctl) ctl.abort(); });
+$("btnFill").addEventListener("click", () => {
+  const t = $("fReply").value;
+  if (!t.trim()){ toast("Paste ChatGPT's reply first", true); return; }
+  applyReply(t);
+});
+$("btnClearReply").addEventListener("click", () => { $("fReply").value = ""; });
+$("btnClearLyrics").addEventListener("click", () => {
+  $("fLyrics").value = ""; updateLyricCount(); refreshPrompt();
+});
+$("btnTighten").addEventListener("click", tighten);
+$("btnCopyPitch").addEventListener("click", async () => {
+  const t = $("fPitch").value;
+  if (!t.trim()){ toast("Nothing to copy yet", true); return; }
+  const ok = await copyText(t);
+  toast(ok ? (t.length > LIMIT ? "Copied — but it is " + (t.length - LIMIT) + " over the limit" : "Pitch copied") : "Could not copy", !ok || t.length > LIMIT);
+});
+$("btnSave").addEventListener("click", saveCurrent);
+$("btnNew").addEventListener("click", () => { resetDesk(); toast("Fresh song — the last one is saved"); });
+$("btnReset").addEventListener("click", confirmReset);
+$("btnHouse").addEventListener("click", openHouse);
+$("btnExport").addEventListener("click", openExport);
+
+$("btnVocab").addEventListener("click", openVocab);
+
+// One delegated pair rather than a listener per field — anything typed or
+// chosen anywhere on the desk counts as unsaved work.
+$("paneCompose").addEventListener("input", markDirty);
+$("paneCompose").addEventListener("change", markDirty);
+
+["fSearch","fFilter","fSort"].forEach(id => {
+  $(id).addEventListener("input", renderLibrary);
+  $(id).addEventListener("change", renderLibrary);
+});
+document.querySelectorAll(".tabs button").forEach(b => {
+  b.addEventListener("click", () => showPane(b.dataset.pane));
+});
+
+/* ------------------------------------------------------------- boot */
+loadVocabLocal();
+
+enhanceCombo($("fGenre"), () => vocab.genres, v => {
+  $("fGenre").value = v;
+  refreshPrompt(); markDirty();
+});
+enhanceCombo(
+  $("fMoodCustom"),
+  () => vocab.moods.map(m => m.name)
+    .filter(n => !draft.moods.some(x => x.toLowerCase() === n.toLowerCase())),
+  v => { addMood(v); $("fMoodCustom").value = ""; }
+);
+
+showPane("compose");
+renderMoods();
+renderThemes();
+renderVersions();
+updateMeter();
+updateLyricCount();
+setEditing(false);
+if (restoreDesk()) toast("Picked up where you left off");
+$("promptPreview").textContent = buildPrompt();
+initStore();
+
+(async function probeSample(){
+  try {
+    sampleFn = window.claude && window.claude.use ? await window.claude.use("sample") : null;
+  } catch(e){ sampleFn = null; }
+  if (sampleFn) $("btnWriteHere").hidden = false;
+})();
+
+})();
+</script>
