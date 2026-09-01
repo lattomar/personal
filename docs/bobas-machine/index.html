@@ -83,6 +83,7 @@
 
 /* ---------- base ---------- */
 *{box-sizing:border-box}
+html,body{max-width:100%; overflow-x:clip}
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:var(--font-body); font-size:14px; line-height:1.55;
@@ -346,12 +347,12 @@ pre.prompt{
 .overlay{
   position:fixed; inset:0; z-index:100; background:rgba(25,16,22,.5);
   display:flex; align-items:center; justify-content:center; padding:20px;
-  backdrop-filter:blur(2px);
+  width:100%; max-width:100vw; overflow:hidden; backdrop-filter:blur(2px);
 }
 .sheet{
   background:var(--surface); border:1px solid var(--rule-strong); border-radius:var(--radius);
   box-shadow:var(--shadow-lift); width:min(560px,100%); max-height:86vh; overflow:auto;
-  padding:18px 20px 20px; display:flex; flex-direction:column; gap:13px;
+  min-width:0; padding:18px 20px 20px; display:flex; flex-direction:column; gap:13px;
 }
 .sheet h2{font-family:var(--font-display); font-size:19px; font-weight:700}
 .sheet p{margin:0; font-size:13px; color:var(--ink-2); line-height:1.6}
@@ -393,14 +394,20 @@ pre.prompt{
   .brand h1{font-size:19px}
   .brand .tagline{font-size:9.5px; letter-spacing:.1em}
   .count{display:none}
-  .overlay{align-items:flex-end; padding:0}
-  .sheet{
-    width:100%; max-height:92dvh; border-radius:var(--radius) var(--radius) 0 0;
-    padding:17px 14px calc(18px + env(safe-area-inset-bottom));
+  .overlay{
+    left:0; right:auto; align-items:flex-end; padding:0;
+    width:100dvw; max-width:100dvw;
   }
-  .vocab-sheet .vocab-rows{max-height:38dvh; padding:2px 0; margin:0}
+  .sheet{
+    width:100dvw; max-width:100dvw; min-width:0; max-height:92dvh; overflow-x:hidden;
+    border-radius:var(--radius) var(--radius) 0 0;
+    padding:17px max(14px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));
+  }
+  .vocab-sheet>*{min-width:0; max-width:100%}
+  .vocab-sheet .vocab-tabs,.vocab-sheet .actions{width:100%; min-width:0}
+  .vocab-sheet .vocab-rows{width:100%; max-height:38dvh; overflow-x:hidden; padding:2px 0; margin:0}
   .vocab-sheet .vocab-row{
-    display:grid; grid-template-columns:minmax(0,1fr) 84px repeat(3,34px);
+    display:grid; grid-template-columns:minmax(0,1fr) minmax(72px,84px) repeat(3,minmax(30px,34px));
     gap:5px; width:100%; align-items:center;
   }
   .vocab-sheet .vocab-row>select{width:84px; min-width:0; padding-left:8px; padding-right:22px}
