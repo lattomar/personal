@@ -541,6 +541,7 @@ pre.prompt{
           <label class="label" for="fAssistant" style="margin:0 -2px 0 0">Send to</label>
           <select id="fAssistant" style="width:auto;min-width:132px"></select>
           <button class="btn primary" type="button" id="btnOpenGpt"><svg data-i aria-hidden="true"><use href="#i-external"/></svg>Open</button>
+          <button class="btn" type="button" id="btnChatSetup"><svg data-i aria-hidden="true"><use href="#i-star"/></svg>Chat setup</button>
           <button class="btn" type="button" id="btnCopyPrompt"><svg data-i aria-hidden="true"><use href="#i-copy"/></svg>Copy prompt</button>
           <button class="btn" type="button" id="btnWriteHere" hidden><svg data-i aria-hidden="true"><use href="#i-wand"/></svg>Write it here with Claude</button>
           <button class="btn danger sm" type="button" id="btnStop" hidden>Stop</button>
@@ -729,7 +730,7 @@ const K = {
   songs:"pitch440.songs.v1", house:"pitch440.house.v1",
   theme:"pitch440.theme.v1", migrated:"pitch440.migrated.v1",
   vocab:"pitch440.vocab.v1", desk:"pitch440.desk.v1",
-  assistant:"pitch440.assistant.v1"
+  assistant:"pitch440.assistant.v1", chatUrl:"pitch440.chatUrl.v1"
 };
 
 // Neither Spotify nor Apple publishes the mood list inside its pitch form, so
@@ -1279,8 +1280,94 @@ function linkFallback(url, prefilled, target){
   });
 }
 
+let refreshAssistantButtons = () => {};
+
+function normalChatUrl(raw){
+  try {
+    const u = new URL(raw.trim());
+    if (u.protocol !== "https:" || !["chatgpt.com", "www.chatgpt.com"].includes(u.hostname)) return "";
+    if (!/^\/c\/[A-Za-z0-9-]+\/?$/.test(u.pathname)) return "";
+    return "https://chatgpt.com" + u.pathname.replace(/\/$/, "");
+  } catch(e){ return ""; }
+}
+
+function openSavedChat(prompt){
+  const url = safeGet(K.chatUrl);
+  if (!url) return false;
+  let win = null;
+  try { win = window.open(url, "bobasChatgpt"); } catch(e){ win = null; }
+  copyText(prompt).then(copied => {
+    if (!win){ linkFallback(url, copied, ASSISTANTS[0]); return; }
+    try { win.opener = null; } catch(e){}
+    toast(copied
+      ? "Prompt copied — paste it into your saved ChatGPT chat"
+      : "Saved chat opened — copy the prompt, then paste it there", !copied);
+  });
+  return true;
+}
+
+function openChatSetup(promptAfterSave){
+  openSheet((sheet, close) => {
+    sheet.appendChild(el("h2", null, "Reuse one ChatGPT conversation"));
+    sheet.appendChild(el("p", null,
+      "Open the conversation you want Boba’s Machine to keep using, copy its normal private URL from the address bar, and save it here once."));
+    const label = el("label", "label", "ChatGPT conversation URL");
+    label.htmlFor = "chatUrlInput";
+    sheet.appendChild(label);
+    const input = el("input");
+    input.id = "chatUrlInput";
+    input.type = "url";
+    input.placeholder = "https://chatgpt.com/c/…";
+    input.value = safeGet(K.chatUrl) || "";
+    sheet.appendChild(input);
+    const note = el("p", null,
+      "Use the /c/ link from your own address bar. A /share/ link is only a shared snapshot and cannot receive new messages.");
+    note.style.fontSize = "12px";
+    note.style.color = "var(--ink-3)";
+    sheet.appendChild(note);
+    const row = el("div", "actions");
+    const save = el("button", "btn primary", "Save chat");
+    save.type = "button";
+    save.addEventListener("click", () => {
+      const url = normalChatUrl(input.value);
+      if (!url){
+        toast("Paste the private ChatGPT /c/ conversation link, not a /share/ link", true);
+        input.focus();
+        return;
+      }
+      safeSet(K.chatUrl, url);
+      close();
+      refreshAssistantButtons();
+      if (promptAfterSave) openSavedChat(promptAfterSave);
+      else toast("Saved — Boba’s Machine will keep reopening this chat");
+    });
+    row.appendChild(save);
+    if (safeGet(K.chatUrl)){
+      const clear = el("button", "btn danger", "Forget chat");
+      clear.type = "button";
+      clear.addEventListener("click", () => {
+        safeSet(K.chatUrl, "");
+        close();
+        refreshAssistantButtons();
+        toast("Saved ChatGPT chat removed");
+      });
+      row.appendChild(clear);
+    }
+    const cancel = el("button", "btn ghost", "Cancel");
+    cancel.type = "button";
+    cancel.addEventListener("click", close);
+    row.appendChild(cancel);
+    sheet.appendChild(row);
+  });
+}
+
 async function handOff(prompt){
   const a = assistant();
+  if (a.id === "chatgpt"){
+    if (openSavedChat(prompt)) return;
+    openChatSetup(prompt);
+    return;
+  }
   const copied = await copyText(prompt);
   if (!a.bare){
     toast(copied ? "Prompt copied — paste it wherever you like" : "Could not copy the prompt", !copied);
@@ -2197,16 +2284,23 @@ $("btnCopyPrompt").addEventListener("click", async () => {
     if (a.id === current) o.selected = true;
     sel.appendChild(o);
   }
-  const relabel = () => {
+  refreshAssistantButtons = () => {
     const a = assistant();
     $("btnOpenGpt").hidden = !a.bare;
-    $("btnOpenGpt").lastChild.textContent = a.bare ? "Open " + a.name : "Open";
+    $("btnChatSetup").hidden = a.id !== "chatgpt";
+    if (a.id === "chatgpt"){
+      $("btnOpenGpt").lastChild.textContent = safeGet(K.chatUrl)
+        ? "Copy + open saved chat" : "Set up ChatGPT chat";
+    } else {
+      $("btnOpenGpt").lastChild.textContent = a.bare ? "Open " + a.name : "Open";
+    }
   };
-  sel.addEventListener("change", () => { safeSet(K.assistant, sel.value); relabel(); });
-  relabel();
+  sel.addEventListener("change", () => { safeSet(K.assistant, sel.value); refreshAssistantButtons(); });
+  refreshAssistantButtons();
 })();
 
 $("btnOpenGpt").addEventListener("click", () => handOff(buildPrompt()));
+$("btnChatSetup").addEventListener("click", () => openChatSetup());
 $("btnWriteHere").addEventListener("click", writeHere);
 $("btnStop").addEventListener("click", () => { if (ctl) ctl.abort(); });
 $("btnFill").addEventListener("click", () => {
