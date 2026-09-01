@@ -20,6 +20,9 @@ This does the same job with the typing removed:
   (the default), Claude, Gemini, or copy-only. The prompt names no vendor, so it
   works anywhere. Gemini has no documented way to receive a prompt through a
   link, so it opens empty with the prompt already on the clipboard.
+- **ChatGPT can reuse one dedicated conversation.** Save its private `/c/` URL
+  once; the main button copies the prompt and reopens that same chat every time.
+  Shared `/share/` snapshots are rejected because they cannot receive messages.
 - **The 440-character cap is enforced while you write**, not discovered after.
   "Tighten to fit" rewrites rather than silently truncating.
 - **Mood and genre come from vocabularies you control** — see below.
