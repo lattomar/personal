@@ -562,7 +562,7 @@ pre.prompt{
       <div class="card-body">
         <div class="notice">
           <svg data-i aria-hidden="true"><use href="#i-star"/></svg>
-          <span>One prompt asks for <b>everything at once</b> &mdash; genre, moods and a polished 440-character description shaped to the three examples you supplied. Run it, paste the reply back below, and every field fills itself.</span>
+          <span>One prompt asks for <b>everything at once</b> &mdash; moods, a polished 440-character description shaped to your examples, and a genre suggestion only when you leave Genre blank. Run it, paste the reply back below, and the fields fill themselves.</span>
         </div>
         <div class="actions">
           <label class="label" for="fAssistant" style="margin:0 -2px 0 0">Send to</label>
@@ -597,8 +597,9 @@ pre.prompt{
       </div>
       <div class="card-body">
         <div>
-          <label class="label" for="fGenre">Genre</label>
+          <label class="label" for="fGenre">Genre <span style="text-transform:none;letter-spacing:0">&mdash; enter manually when known</span></label>
           <input id="fGenre" type="text" placeholder="pop ballad" autocomplete="off">
+          <p class="genre-note" id="genreNote">If left blank, AI will provide a suggestion for you to review.</p>
         </div>
         <div>
           <label class="label">Mood <span style="text-transform:none;letter-spacing:0">&mdash; tap to pick, the same words every time</span></label>
@@ -696,6 +697,10 @@ pre.prompt{
     margin:8px 0 0; font-family:var(--font-mono); font-size:10.5px;
     color:var(--warn); letter-spacing:.03em;
   }
+  .genre-note{
+    margin:6px 0 0; font-size:11.5px; line-height:1.45; color:var(--ink-3);
+  }
+  .genre-note.suggested{color:var(--warn); font-weight:600}
 
   .combo{position:relative}
   .combo>input{padding-right:34px}
@@ -1068,6 +1073,14 @@ function collect(){
   };
 }
 
+function markGenreSuggested(on){
+  const note = $("genreNote");
+  note.classList.toggle("suggested", !!on);
+  note.textContent = on
+    ? "AI suggestion — please review this genre before saving."
+    : "If left blank, AI will provide a suggestion for you to review.";
+}
+
 /* --------------------------------------------------------------- moods */
 function renderMoods(){
   const box = $("moodPicker");
@@ -1128,6 +1141,8 @@ function buildPrompt(){
   L.push("- Describe the song directly. Do not fall into a fixed second-sentence formula and do not write phrases such as ‘the lyrics explore’, ‘the lyrics describe’ or ‘the song tells the story’.");
   L.push("- Use a clear editorial label tone: descriptive and emotionally specific, never salesy.");
   L.push("- No superlatives, comparisons to other artists or invented production, vocal or instrumental details.");
+  L.push("- GENRE AUTHORITY: If SONG includes ‘Genre supplied by the artist or label’, return that exact genre in GENRE. Never replace, reinterpret or reclassify it.");
+  L.push("- GENRE SUGGESTION: If no genre is supplied, give one conservative, broad suggestion based only on the available evidence. Lyrics alone cannot establish production style, so never invent sonic details or false precision.");
   L.push("- MOODS: choose " + (vocab.moodCap > 1 ? "up to " + vocab.moodCap : "one") +
     ", only from this list — " + vocab.moods.map(m => m.name).join(", ") + ".");
   L.push("- GENRE: one short phrase, such as \"pop ballad\", \"dance-pop\", \"alt-R&B\", \"acoustic singer-songwriter\".");
@@ -1147,7 +1162,7 @@ function buildPrompt(){
   L.push("Title: " + (d.title || "(untitled)"));
   L.push("Artist: " + (d.artist || "(unknown)"));
   if (d.lang) L.push("Lyric language: " + d.lang);
-  if (d.genre) L.push("Genre the label already has down: " + d.genre);
+  if (d.genre) L.push("Genre supplied by the artist or label: " + d.genre);
   if (d.moods.length) L.push("Moods the label already has down: " + d.moods.join(", "));
   L.push("");
   L.push("LYRICS");
@@ -1244,7 +1259,12 @@ function parseReply(text){
 function applyReply(text){
   const p = parseReply(text);
   const filled = [];
-  if (p.genre){ $("fGenre").value = p.genre; filled.push("genre"); }
+  const suppliedGenre = $("fGenre").value.trim();
+  if (p.genre && !suppliedGenre){
+    $("fGenre").value = p.genre;
+    markGenreSuggested(true);
+    filled.push("a genre suggestion");
+  }
   if (p.moods.length){
     draft.moods = [];
     p.moods.forEach(addMood);
@@ -1752,6 +1772,7 @@ function reallyLoad(s){
   $("fLyrics").value = s.lyrics;
   $("fLang").value = s.lyricLanguage || "";
   $("fGenre").value = s.genre;
+  markGenreSuggested(false);
   $("fPitch").value = s.description;
   $("fReply").value = "";
   renderMoods(); renderVersions();
@@ -1768,6 +1789,7 @@ function resetDesk(){
   ["fTitle","fArtist","fLyrics","fGenre","fPitch","fReply","fMoodCustom"]
     .forEach(id => { $(id).value = ""; });
   $("fLang").value = "";
+  markGenreSuggested(false);
   forgetDesk();
   renderMoods(); renderVersions();
   updateMeter(); updateLyricCount(); refreshPrompt();
@@ -2342,6 +2364,7 @@ function restoreDesk(){
   $("fLyrics").value = x.lyrics || "";
   $("fLang").value = x.lang || "";
   $("fGenre").value = x.genre || "";
+  markGenreSuggested(false);
   $("fPitch").value = x.pitch || "";
   renderMoods(); renderVersions();
   updateMeter(); updateLyricCount(); refreshPrompt();
@@ -2350,7 +2373,8 @@ function restoreDesk(){
 }
 
 /* ---------------------------------------------------------- wiring */
-["fTitle","fArtist","fGenre"].forEach(id => $(id).addEventListener("input", refreshPrompt));
+["fTitle","fArtist"].forEach(id => $(id).addEventListener("input", refreshPrompt));
+$("fGenre").addEventListener("input", () => { markGenreSuggested(false); refreshPrompt(); });
 $("fLang").addEventListener("change", refreshPrompt);
 $("fLyrics").addEventListener("input", () => { updateLyricCount(); refreshPrompt(); });
 $("fPitch").addEventListener("input", updateMeter);
@@ -2429,6 +2453,7 @@ loadVocabLocal();
 
 enhanceCombo($("fGenre"), () => vocab.genres, v => {
   $("fGenre").value = v;
+  markGenreSuggested(false);
   refreshPrompt(); markDirty();
 });
 enhanceCombo(
