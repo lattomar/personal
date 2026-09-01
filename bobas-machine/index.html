@@ -271,7 +271,11 @@ pre.prompt{
 .lib-controls select{flex:0 1 auto; width:auto; min-width:118px}
 .lib-list{
   overflow-y:auto; display:flex; flex-direction:column; gap:10px;
-  padding:2px 2px 10px; margin:-2px -2px 0; min-height:0;
+  padding:2px 16px 16px; margin:0; min-height:0;
+}
+.library-card{
+  display:flex; flex:1 1 auto; flex-direction:column; min-height:360px;
+  overflow:hidden;
 }
 .entry{
   background:var(--surface); border:1px solid var(--rule); border-radius:var(--radius);
@@ -362,6 +366,7 @@ pre.prompt{
   .tabs{display:flex}
   .pane.library{position:static; max-height:none}
   .pane[hidden]{display:none}
+  .library-card{min-height:360px}
   .lib-list{overflow:visible; max-height:none}
   .cat-mascots{width:78px; height:50px; margin:-6px 0 -7px}
 }
@@ -372,6 +377,21 @@ pre.prompt{
   .brand h1{font-size:19px}
   .brand .tagline{font-size:9.5px; letter-spacing:.1em}
   .count{display:none}
+  .overlay{align-items:flex-end; padding:0}
+  .sheet{
+    width:100%; max-height:92dvh; border-radius:var(--radius) var(--radius) 0 0;
+    padding:17px 14px calc(18px + env(safe-area-inset-bottom));
+  }
+  .vocab-sheet .vocab-rows{max-height:38dvh; padding:2px 0; margin:0}
+  .vocab-sheet .vocab-row{
+    display:grid; grid-template-columns:minmax(0,1fr) 84px repeat(3,34px);
+    gap:5px; width:100%; align-items:center;
+  }
+  .vocab-sheet .vocab-row>select{width:84px; min-width:0; padding-left:8px; padding-right:22px}
+  .vocab-sheet .vocab-row[data-kind="genres"]>input{grid-column:1 / 3}
+  .vocab-sheet .vocab-row .used{display:none}
+  .vocab-sheet .vocab-row .mini{width:34px; padding:8px 4px}
+  .vocab-sheet .actions>.btn{flex:1 1 auto; justify-content:center}
 }
 </style>
 <style>
@@ -535,7 +555,7 @@ pre.prompt{
       <div class="card-body">
         <div class="notice">
           <svg data-i aria-hidden="true"><use href="#i-star"/></svg>
-          <span>One prompt asks for <b>everything at once</b> &mdash; genre, moods and a polished 440-character description. Run it, paste the reply back below, and every field fills itself.</span>
+          <span>One prompt asks for <b>everything at once</b> &mdash; genre, moods and a polished 440-character description shaped to the three examples you supplied. Run it, paste the reply back below, and every field fills itself.</span>
         </div>
         <div class="actions">
           <label class="label" for="fAssistant" style="margin:0 -2px 0 0">Send to</label>
@@ -628,7 +648,7 @@ pre.prompt{
   </section>
 
   <section class="pane library" id="paneLibrary" aria-label="Saved songs">
-    <div class="card" style="display:flex;flex-direction:column;min-height:0;overflow:visible">
+    <div class="card library-card">
       <div class="card-head">
         <svg data-i aria-hidden="true"><use href="#i-books"/></svg>
         <h2>Library</h2>
@@ -644,8 +664,8 @@ pre.prompt{
           </select>
         </div>
       </div>
+      <div class="lib-list" id="libList"></div>
     </div>
-    <div class="lib-list" id="libList"></div>
   </section>
 </main>
 
@@ -1080,19 +1100,21 @@ function buildPrompt(){
   L.push("RULES");
   L.push("- DESCRIPTION must be " + LIMIT + " characters or fewer, counting spaces and punctuation. This is a hard cap. Count it before answering and rewrite it shorter if needed.");
   L.push("- Write DESCRIPTION in English, whatever language the lyrics are in.");
-  L.push("- Write one flowing paragraph, ideally three concise sentences. No heading, bullet points, emoji or hashtags.");
-  L.push("- Open with the song title in curly quotation marks. Include the artist naturally in the first sentence when supplied.");
-  L.push("- First identify the genre or sonic blend and central subject. Then explain the story, conflict or message. Close with its emotional effect or musical character when supported by the supplied information.");
+  L.push("- Write one flowing paragraph of exactly three concise sentences. No heading, bullet points, emoji or hashtags.");
+  L.push("- REQUIRED STRUCTURE: Sentence 1 opens with the title in curly quotation marks, names the artist naturally when supplied, identifies the genre or sonic blend, and states the central subject.");
+  L.push("- REQUIRED STRUCTURE: Sentence 2 explains the story, conflict or message using specific meaning supported by the lyrics.");
+  L.push("- REQUIRED STRUCTURE: Sentence 3 closes with the song's emotional arc, effect or musical character, but only when supported by the supplied information.");
   L.push("- Use a clear editorial label tone: descriptive and emotionally specific, never salesy.");
   L.push("- No superlatives, comparisons to other artists or invented production, vocal or instrumental details.");
   L.push("- MOODS: choose " + (vocab.moodCap > 1 ? "up to " + vocab.moodCap : "one") +
     ", only from this list — " + vocab.moods.map(m => m.name).join(", ") + ".");
   L.push("- GENRE: one short phrase, such as \"pop ballad\", \"dance-pop\", \"alt-R&B\", \"acoustic singer-songwriter\".");
   L.push("");
-  L.push("STYLE REFERENCES — match their structure and tone, but obey the " + LIMIT + "-character cap");
-  L.push("“Akur” by Zaki Yamani is an emotional pop ballad about heartbreak, acceptance, and the difficult choice to let go. The song captures the pain of realizing that a relationship has changed, while choosing to honour a partner’s feelings despite the hurt. Through a melancholic mood, it reflects on love, sacrifice, and the strength it takes to step aside.");
-  L.push("“完美世界 (PRFT WRLD)” blends underground rap and rage while exploring Lokk’s self-created reality—one free from outside judgment, competition, and expectations. Rather than depicting an ideal world, the track embraces scars, resilience, and the freedom to create your own rules when reality no longer fits.");
-  L.push("“IKON” is a high-energy pop anthem blending 80s disco nostalgia with modern dance-pop and electropop. Its confident message celebrates individuality and the idea that everyone can be an icon. Bold and celebratory, it is built around movement, self-expression, and creating your own moment.");
+  L.push("STYLE REFERENCES — mirror their editorial tone, pacing and three-part structure. Do not copy their wording, and keep the new DESCRIPTION within " + LIMIT + " characters even though a reference may be longer.");
+  L.push("“Akur” by Zaki Yamani is an emotional pop ballad about heartbreak, acceptance, and the difficult choice to let go. The song captures the pain of realizing that a relationship has changed, while choosing to honour and comply with a partner’s feelings and wishes despite the hurt it brings. Through melancholic melodies and heartfelt vocals, it reflects on love, sacrifice, and the strength it takes to step aside for someone you still deeply care for.");
+  L.push("“完美世界 (PRFT WRLD)” is the third release from Lokk’s Huaweicore, blending underground rap and rage with distorted production, electronic synths, clipping, and heavily processed vocals. Rather than depicting an ideal world, the track explores Lokk’s self-created reality—one free from outside judgment, competition, and expectations. Chaotic yet controlled, it embraces scars, resilience, and the freedom to create your own rules when reality no longer fits.");
+  L.push("“IKON” is a high-energy pop anthem that blends 80s disco nostalgia with modern dance-pop and electropop. Built around a confident, empowering message, the song celebrates individuality and the idea that everyone can be an icon in their own right. With an energetic beat and dedicated dance break, it delivers a bold, celebratory sound made for movement, self-expression, and creating your own moment.");
+  L.push("Before replying, compare DESCRIPTION with all three references. If its structure, pacing and editorial tone do not clearly belong beside them, rewrite it. Never borrow an unsupported production detail from a reference.");
   if (house){
     L.push("");
     L.push("HOUSE STYLE — these win over anything above");
@@ -1291,17 +1313,45 @@ function normalChatUrl(raw){
   } catch(e){ return ""; }
 }
 
+function manualPromptCopy(prompt, url){
+  openSheet((sheet, close) => {
+    sheet.appendChild(el("h2", null, "Copy the prompt"));
+    sheet.appendChild(el("p", null,
+      "Your browser blocked automatic copying. Tap the box, copy everything, then open the saved chat."));
+    const ta = el("textarea");
+    ta.rows = 10;
+    ta.readOnly = true;
+    ta.value = prompt;
+    ta.addEventListener("focus", () => ta.select());
+    sheet.appendChild(ta);
+    const row = el("div", "actions");
+    const again = el("button", "btn primary", "Try copying again");
+    again.type = "button";
+    again.addEventListener("click", async () => {
+      const ok = await copyText(prompt);
+      if (!ok){ ta.focus(); ta.select(); toast("Press Ctrl+C, or tap Copy on your phone", true); return; }
+      toast("Prompt copied");
+      window.location.assign(url);
+    });
+    const open = el("a", "btn", "Open saved chat");
+    open.href = url;
+    open.style.textDecoration = "none";
+    const cancel = el("button", "btn ghost", "Close");
+    cancel.type = "button";
+    cancel.addEventListener("click", close);
+    row.appendChild(again); row.appendChild(open); row.appendChild(cancel);
+    sheet.appendChild(row);
+    setTimeout(() => { ta.focus(); ta.select(); }, 0);
+  });
+}
+
 function openSavedChat(prompt){
   const url = safeGet(K.chatUrl);
   if (!url) return false;
-  let win = null;
-  try { win = window.open(url, "bobasChatgpt"); } catch(e){ win = null; }
   copyText(prompt).then(copied => {
-    if (!win){ linkFallback(url, copied, ASSISTANTS[0]); return; }
-    try { win.opener = null; } catch(e){}
-    toast(copied
-      ? "Prompt copied — paste it into your saved ChatGPT chat"
-      : "Saved chat opened — copy the prompt, then paste it there", !copied);
+    if (!copied){ manualPromptCopy(prompt, url); return; }
+    toast("Prompt copied — opening your saved ChatGPT chat");
+    window.location.assign(url);
   });
   return true;
 }
@@ -1935,6 +1985,7 @@ function openVocab(){
   };
 
   openSheet((sheet, close) => {
+    sheet.classList.add("vocab-sheet");
     sheet.appendChild(el("h2", null, "Vocabulary"));
     const blurb = el("p", null,
       "These are the words the prompt offers ChatGPT, so they are the words that come back. " +
@@ -1955,6 +2006,7 @@ function openVocab(){
 
       list.forEach((item, i) => {
         const row = el("div", "vocab-row");
+        row.dataset.kind = tab;
         const name = el("input");
         name.type = "text";
         name.value = tab === "moods" ? item.name : item;
@@ -2287,10 +2339,10 @@ $("btnCopyPrompt").addEventListener("click", async () => {
   refreshAssistantButtons = () => {
     const a = assistant();
     $("btnOpenGpt").hidden = !a.bare;
-    $("btnChatSetup").hidden = a.id !== "chatgpt";
+    $("btnChatSetup").hidden = a.id !== "chatgpt" || !safeGet(K.chatUrl);
     if (a.id === "chatgpt"){
       $("btnOpenGpt").lastChild.textContent = safeGet(K.chatUrl)
-        ? "Copy + open saved chat" : "Set up ChatGPT chat";
+        ? "Copy + go to saved chat" : "Set up ChatGPT chat";
     } else {
       $("btnOpenGpt").lastChild.textContent = a.bare ? "Open " + a.name : "Open";
     }
