@@ -1,9 +1,9 @@
 # Boba's Machine
 
-A single-page tool for writing song pitches that have to fit **440 characters**.
+A single-page tool for writing song descriptions that have to fit **440 characters**.
 
-Paste the lyrics, send one prompt to ChatGPT, paste the reply back — genre, mood,
-themes and the pitch all fill themselves in. Everything saves to a searchable
+Paste the lyrics, send one prompt to an assistant, paste the reply back — genre,
+moods and the description all fill themselves in. Everything saves to a searchable
 library you can delete from.
 
 ## Why it exists
@@ -14,7 +14,7 @@ it by eye until it fits, and keep no record of any of it.
 
 This does the same job with the typing removed:
 
-- **One prompt asks for everything at once.** Genre, mood, themes and the pitch
+- **One prompt asks for everything at once.** Genre, moods and the description
   come back in one reply, in a fixed format the page reads and fills in for you.
 - **It is not tied to any one assistant.** A "Send to" picker offers ChatGPT
   (the default), Claude, Gemini, or copy-only. The prompt names no vendor, so it
@@ -24,10 +24,10 @@ This does the same job with the typing removed:
   "Tighten to fit" rewrites rather than silently truncating.
 - **Mood and genre come from vocabularies you control** — see below.
 - **A "house style" note** is saved once and added to every prompt.
-- **Everything is kept** — lyrics, metadata, the pitch, older versions — and
+- **Everything is kept** — lyrics, metadata, the description, older versions — and
   nothing is deleted unless you delete it. Deletes can be undone.
 
-Lyrics can be in any language; the pitch always comes back in English.
+Lyrics can be in any language; the description always comes back in English.
 
 ## About the mood list
 
@@ -107,5 +107,6 @@ Export from the header at any time; JSON is the complete record.
   an empty snapshot never overwrites a non-empty local backup.
 - Work in progress autosaves as you type and is restored after a reload.
 - Reply parsing is tolerant: the structured block fills every field, fenced
-  replies are unwrapped, and a plain paragraph fills only the pitch.
-- No Sanrio artwork. The icons are original SVG in a punk-cute palette.
+  replies are unwrapped, and a plain paragraph fills only the description.
+- The header uses transparent Kuromi and Luna-and-Lilo image cutouts supplied
+  for this personal tool.
