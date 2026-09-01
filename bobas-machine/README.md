@@ -16,6 +16,10 @@ This does the same job with the typing removed:
 
 - **One prompt asks for everything at once.** Genre, mood, themes and the pitch
   come back in one reply, in a fixed format the page reads and fills in for you.
+- **It is not tied to any one assistant.** A "Send to" picker offers ChatGPT
+  (the default), Claude, Gemini, or copy-only. The prompt names no vendor, so it
+  works anywhere. Gemini has no documented way to receive a prompt through a
+  link, so it opens empty with the prompt already on the clipboard.
 - **The 440-character cap is enforced while you write**, not discovered after.
   "Tighten to fit" rewrites rather than silently truncating.
 - **Mood and genre come from vocabularies you control** — see below.
@@ -75,6 +79,17 @@ serves. No sign-in, no install, and **lyrics never leave the browser** — the
 library is `localStorage`, so it does not sync between devices.
 
 Never edit the generated file. Edit `index.html` and rebuild.
+
+The same file also works with no hosting at all: download it and open it. It is
+entirely self-contained, so double-clicking it runs the tool offline.
+
+### Turning the static page on
+
+`github.com/lattomar/personal` → Settings → Pages → Build and deployment →
+Source: **Deploy from a branch** → Branch **`main`**, folder **`/docs`** → Save.
+
+`docs/index.html` and the repo-root `index.html` are redirects into the app, so
+**`lattomar.github.io/personal`** reaches it whichever folder is selected.
 
 ## Where the data lives
 

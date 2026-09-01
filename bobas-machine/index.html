@@ -526,12 +526,14 @@ pre.prompt{
       <div class="card-body">
         <div class="notice">
           <svg data-i aria-hidden="true"><use href="#i-star"/></svg>
-          <span>One prompt asks for <b>everything at once</b> &mdash; genre, mood, themes and the 440-character pitch. Run it in ChatGPT, paste the whole reply back below, and every field fills itself.</span>
+          <span>One prompt asks for <b>everything at once</b> &mdash; genre, mood, themes and the 440-character pitch. Run it, paste the whole reply back below, and every field fills itself. The prompt names no particular assistant, so it works in any of them.</span>
         </div>
         <div class="actions">
-          <button class="btn primary" type="button" id="btnOpenGpt"><svg data-i aria-hidden="true"><use href="#i-external"/></svg>Open in ChatGPT</button>
+          <label class="label" for="fAssistant" style="margin:0 -2px 0 0">Send to</label>
+          <select id="fAssistant" style="width:auto;min-width:132px"></select>
+          <button class="btn primary" type="button" id="btnOpenGpt"><svg data-i aria-hidden="true"><use href="#i-external"/></svg>Open</button>
           <button class="btn" type="button" id="btnCopyPrompt"><svg data-i aria-hidden="true"><use href="#i-copy"/></svg>Copy prompt</button>
-          <button class="btn" type="button" id="btnWriteHere" hidden><svg data-i aria-hidden="true"><use href="#i-wand"/></svg>Write it here</button>
+          <button class="btn" type="button" id="btnWriteHere" hidden><svg data-i aria-hidden="true"><use href="#i-wand"/></svg>Write it here with Claude</button>
           <button class="btn danger sm" type="button" id="btnStop" hidden>Stop</button>
           <span id="genStatus" class="mono" style="font-size:11.5px;color:var(--ink-3)"></span>
         </div>
@@ -540,8 +542,8 @@ pre.prompt{
           <div class="tuck-body"><pre class="prompt" id="promptPreview"></pre></div>
         </details>
         <div>
-          <label class="label" for="fReply">Paste ChatGPT&rsquo;s reply</label>
-          <textarea id="fReply" class="reply" placeholder="Paste the whole reply here, exactly as ChatGPT wrote it." spellcheck="false"></textarea>
+          <label class="label" for="fReply">Paste the reply</label>
+          <textarea id="fReply" class="reply" placeholder="Paste the whole reply here, exactly as it came back." spellcheck="false"></textarea>
           <div class="actions" style="margin-top:8px">
             <button class="btn primary" type="button" id="btnFill"><svg data-i aria-hidden="true"><use href="#i-check"/></svg>Fill in from reply</button>
             <button class="btn ghost sm" type="button" id="btnClearReply">Clear</button>
@@ -764,7 +766,8 @@ const LYRIC_CAP = 12000;
 const K = {
   songs:"pitch440.songs.v1", house:"pitch440.house.v1",
   theme:"pitch440.theme.v1", migrated:"pitch440.migrated.v1",
-  vocab:"pitch440.vocab.v1", desk:"pitch440.desk.v1"
+  vocab:"pitch440.vocab.v1", desk:"pitch440.desk.v1",
+  assistant:"pitch440.assistant.v1"
 };
 
 // Neither Spotify nor Apple publishes the mood list inside its pitch form, so
@@ -796,6 +799,21 @@ const DEFAULT_MOODS = [
 // her other destinations may allow more.
 const DEFAULT_CAP = 2;
 const ENERGIES = ["Low","Medium","High"];
+
+// The tool is not tied to any one assistant. ChatGPT is the default because
+// that is what gets used here; the prompt itself names no vendor, so it works
+// anywhere. Where an assistant has no documented way to receive a prompt in a
+// link, the prompt is copied and the assistant opened empty.
+const ASSISTANTS = [
+  { id:"chatgpt", name:"ChatGPT", q:"https://chatgpt.com/?q=", bare:"https://chatgpt.com/" },
+  { id:"claude",  name:"Claude",  q:"https://claude.ai/new?q=", bare:"https://claude.ai/new" },
+  { id:"gemini",  name:"Gemini",  q:"",                         bare:"https://gemini.google.com/app" },
+  { id:"copy",    name:"nothing — just copy it", q:"",           bare:"" }
+];
+function assistant(){
+  const id = safeGet(K.assistant) || "chatgpt";
+  return ASSISTANTS.find(a => a.id === id) || ASSISTANTS[0];
+}
 const DEFAULT_GENRES = [
   "pop ballad","power ballad","pop","dance-pop","synth-pop","electropop","indie pop",
   "R&B","alt-R&B","contemporary R&B","soul","neo-soul","hip-hop","trap","drill",
@@ -1263,7 +1281,7 @@ function applyReply(text){
   if (p.pitch){ $("fPitch").value = p.pitch; filled.push("the pitch"); }
   renderMoods(); renderThemes(); updateMeter(); refreshPrompt();
 
-  if (!filled.length){ toast("Nothing to read in that — paste ChatGPT's whole reply", true); return; }
+  if (!filled.length){ toast("Nothing to read in that — paste the whole reply", true); return; }
   const n = $("fPitch").value.length;
   if (p.pitch && n > LIMIT) toast("Filled in " + filled.join(", ") + " — but it came back " + (n - LIMIT) + " over", true);
   else toast("Filled in " + filled.join(", "));
@@ -1313,14 +1331,15 @@ function openSheet(build){
 }
 
 /* ------------------------------------------------------ ChatGPT hand-off */
-function linkFallback(url, prefilled){
+function linkFallback(url, prefilled, target){
+  const who = target || assistant();
   openSheet((sheet, close) => {
-    sheet.appendChild(el("h2", null, "Open ChatGPT yourself"));
+    sheet.appendChild(el("h2", null, "Open " + who.name + " yourself"));
     sheet.appendChild(el("p", null, prefilled
-      ? "This page could not open a new tab for you. The prompt is on your clipboard — open ChatGPT and paste it."
-      : "The prompt was too long to carry in a link, so it is on your clipboard instead. Open ChatGPT and paste it."));
-    const a = el("a", "btn primary", "Go to ChatGPT");
-    a.href = prefilled ? url : "https://chatgpt.com/";
+      ? "This page could not open a new tab for you. The prompt is on your clipboard — open " + who.name + " and paste it."
+      : "The prompt was too long to carry in a link, so it is on your clipboard instead. Open " + who.name + " and paste it."));
+    const a = el("a", "btn primary", "Go to " + who.name);
+    a.href = prefilled ? url : who.bare;
     a.target = "_blank"; a.rel = "noopener noreferrer";
     a.style.textDecoration = "none";
     a.addEventListener("click", close);
@@ -1334,14 +1353,19 @@ function linkFallback(url, prefilled){
 }
 
 async function handOff(prompt){
+  const a = assistant();
   const copied = await copyText(prompt);
+  if (!a.bare){
+    toast(copied ? "Prompt copied — paste it wherever you like" : "Could not copy the prompt", !copied);
+    return;
+  }
   const enc = encodeURIComponent(prompt);
-  const prefilled = enc.length <= 6000;
-  const url = prefilled ? "https://chatgpt.com/?q=" + enc : "https://chatgpt.com/";
+  const prefilled = !!a.q && enc.length <= 6000;
+  const url = prefilled ? a.q + enc : a.bare;
   let win = null;
   try { win = window.open(url, "_blank", "noopener"); } catch(e){ win = null; }
-  if (!win){ linkFallback(url, prefilled && copied); return; }
-  toast(prefilled ? "ChatGPT opened with the prompt in it" : "Prompt copied — paste it into ChatGPT");
+  if (!win){ linkFallback(url, prefilled && copied, a); return; }
+  toast(prefilled ? a.name + " opened with the prompt in it" : "Prompt copied — paste it into " + a.name);
 }
 
 /* --------------------------------------------------------------- sample */
@@ -1350,7 +1374,7 @@ let ctl = null;
 
 function sampleError(e){
   const code = e && e.code;
-  if (code === "not_granted") return "Writing here needs a Claude account — use the ChatGPT buttons instead";
+  if (code === "not_granted") return "Writing here needs a Claude account — use the copy or open buttons instead";
   if (code === "rate_limited") return "Too many requests just now — give it a minute";
   if (code === "prompt_too_large") return "Those lyrics are too long — trim them a little";
   if (code === "invalid_json") return "The reply came back in a shape this could not read";
@@ -2268,14 +2292,32 @@ $("fThemeInput").addEventListener("keydown", e => {
 
 $("btnCopyPrompt").addEventListener("click", async () => {
   const ok = await copyText(buildPrompt());
-  toast(ok ? "Prompt copied — paste it into ChatGPT" : "Could not copy the prompt", !ok);
+  toast(ok ? "Prompt copied" : "Could not copy the prompt", !ok);
 });
+(function buildAssistantPicker(){
+  const sel = $("fAssistant");
+  const current = assistant().id;
+  for (const a of ASSISTANTS){
+    const o = document.createElement("option");
+    o.value = a.id; o.textContent = a.name;
+    if (a.id === current) o.selected = true;
+    sel.appendChild(o);
+  }
+  const relabel = () => {
+    const a = assistant();
+    $("btnOpenGpt").hidden = !a.bare;
+    $("btnOpenGpt").lastChild.textContent = a.bare ? "Open " + a.name : "Open";
+  };
+  sel.addEventListener("change", () => { safeSet(K.assistant, sel.value); relabel(); });
+  relabel();
+})();
+
 $("btnOpenGpt").addEventListener("click", () => handOff(buildPrompt()));
 $("btnWriteHere").addEventListener("click", writeHere);
 $("btnStop").addEventListener("click", () => { if (ctl) ctl.abort(); });
 $("btnFill").addEventListener("click", () => {
   const t = $("fReply").value;
-  if (!t.trim()){ toast("Paste ChatGPT's reply first", true); return; }
+  if (!t.trim()){ toast("Paste the reply first", true); return; }
   applyReply(t);
 });
 $("btnClearReply").addEventListener("click", () => { $("fReply").value = ""; });
