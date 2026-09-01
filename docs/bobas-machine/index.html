@@ -181,6 +181,7 @@ main{
   background:var(--surface); border:1px solid var(--rule);
   border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
 }
+.card.combo-card{overflow:visible; position:relative; z-index:5}
 .card-head{
   display:flex; align-items:center; gap:9px; padding:13px 16px 0;
 }
@@ -576,7 +577,7 @@ pre.prompt{
       </div>
     </div>
 
-    <div class="card">
+    <div class="card combo-card">
       <div class="card-head">
         <svg data-i aria-hidden="true"><use href="#i-tag"/></svg>
         <h2>Genre &amp; mood</h2>
