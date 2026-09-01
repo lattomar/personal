@@ -484,7 +484,7 @@ pre.prompt{
 </nav>
 
 <main>
-  <section class="pane compose" id="paneCompose" aria-label="Compose a pitch">
+  <section class="pane compose" id="paneCompose" aria-label="Compose a description">
 
     <div class="card">
       <div class="card-head">
@@ -516,7 +516,7 @@ pre.prompt{
         </div>
         <div>
           <label class="label" for="fLyrics">Lyrics</label>
-          <textarea id="fLyrics" class="lyrics" placeholder="Paste the lyrics here. Any language &mdash; the pitch always comes back in English." spellcheck="false"></textarea>
+          <textarea id="fLyrics" class="lyrics" placeholder="Paste the lyrics here. Any language &mdash; the description always comes back in English." spellcheck="false"></textarea>
           <div class="entry-meta" style="margin-top:7px">
             <span id="lyricCount">empty</span>
             <span class="spacer" style="margin-left:auto"></span>
@@ -529,13 +529,13 @@ pre.prompt{
     <div class="card">
       <div class="card-head">
         <svg data-i aria-hidden="true"><use href="#i-send"/></svg>
-        <h2>Ask for the pitch</h2>
+        <h2>Create the description</h2>
         <span class="hint">step 2</span>
       </div>
       <div class="card-body">
         <div class="notice">
           <svg data-i aria-hidden="true"><use href="#i-star"/></svg>
-          <span>One prompt asks for <b>everything at once</b> &mdash; genre, mood, themes and the 440-character pitch. Run it, paste the whole reply back below, and every field fills itself. The prompt names no particular assistant, so it works in any of them.</span>
+          <span>One prompt asks for <b>everything at once</b> &mdash; genre, moods and a polished 440-character description. Run it, paste the reply back below, and every field fills itself.</span>
         </div>
         <div class="actions">
           <label class="label" for="fAssistant" style="margin:0 -2px 0 0">Send to</label>
@@ -568,48 +568,32 @@ pre.prompt{
         <span class="hint">step 3</span>
       </div>
       <div class="card-body">
-        <div class="row">
-          <div>
-            <label class="label" for="fGenre">Genre</label>
-            <input id="fGenre" type="text" placeholder="pop ballad" autocomplete="off">
-          </div>
-          <div>
-            <label class="label" for="fEnergy">Energy</label>
-            <select id="fEnergy">
-              <option value="">Not set</option>
-              <option>Low</option><option>Medium</option><option>High</option>
-            </select>
-          </div>
+        <div>
+          <label class="label" for="fGenre">Genre</label>
+          <input id="fGenre" type="text" placeholder="pop ballad" autocomplete="off">
         </div>
         <div>
           <label class="label">Mood <span style="text-transform:none;letter-spacing:0">&mdash; tap to pick, the same words every time</span></label>
           <div class="chips" id="moodPicker"></div>
           <p class="cap-note" id="moodCapNote" hidden></p>
         </div>
-        <div class="row">
-          <div>
-            <label class="label" for="fMoodCustom">Add a mood of your own</label>
-            <input id="fMoodCustom" type="text" placeholder="type, or browse the list" autocomplete="off">
-          </div>
-          <div>
-            <label class="label" for="fThemeInput">Themes</label>
-            <input id="fThemeInput" type="text" placeholder="type and press enter" autocomplete="off">
-          </div>
+        <div>
+          <label class="label" for="fMoodCustom">Add a mood of your own</label>
+          <input id="fMoodCustom" type="text" placeholder="type, or browse the list" autocomplete="off">
         </div>
-        <div class="chips" id="themeChips"></div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-head">
         <svg data-i aria-hidden="true"><use href="#i-pen"/></svg>
-        <h2>The pitch</h2>
+        <h2>The description</h2>
         <span class="hint">step 4</span>
       </div>
       <div class="card-body">
         <div>
           <label class="label" for="fPitch">440 characters, no more</label>
-          <textarea id="fPitch" class="pitch" placeholder="The finished pitch lands here &mdash; then edit it until it sounds like you."></textarea>
+          <textarea id="fPitch" class="pitch" placeholder="The finished description lands here &mdash; then edit it until it sounds right."></textarea>
         </div>
         <div class="meter" id="pitchMeter">
           <svg class="ring" viewBox="0 0 44 44" aria-hidden="true">
@@ -625,30 +609,6 @@ pre.prompt{
             <button class="btn sm" type="button" id="btnCopyPitch"><svg data-i aria-hidden="true"><use href="#i-copy"/></svg>Copy</button>
           </div>
         </div>
-
-        <details class="tuck">
-          <summary>Status &amp; dates</summary>
-          <div class="tuck-body">
-            <div class="row thirds">
-              <div>
-                <label class="label" for="fStatus">Status</label>
-                <select id="fStatus">
-                  <option value="draft">Draft</option>
-                  <option value="approved">Approved</option>
-                  <option value="sent">Sent</option>
-                </select>
-              </div>
-              <div>
-                <label class="label" for="fRelease">Release date</label>
-                <input id="fRelease" type="date">
-              </div>
-              <div>
-                <label class="label" for="fDeadline">Pitch deadline</label>
-                <input id="fDeadline" type="date">
-              </div>
-            </div>
-          </div>
-        </details>
 
         <details class="tuck" id="versionsWrap" hidden>
           <summary>Earlier versions <span id="versionCount" class="mono"></span></summary>
@@ -675,16 +635,9 @@ pre.prompt{
       </div>
       <div class="card-body" style="padding-bottom:10px">
         <div class="lib-controls">
-          <input id="fSearch" type="search" placeholder="Search title, artist or pitch" autocomplete="off">
-          <select id="fFilter" aria-label="Filter by status">
-            <option value="">All statuses</option>
-            <option value="draft">Draft</option>
-            <option value="approved">Approved</option>
-            <option value="sent">Sent</option>
-          </select>
+          <input id="fSearch" type="search" placeholder="Search title, artist or description" autocomplete="off">
           <select id="fSort" aria-label="Sort">
             <option value="updated">Last edited</option>
-            <option value="deadline">Deadline first</option>
             <option value="title">Title A&ndash;Z</option>
             <option value="artist">Artist A&ndash;Z</option>
           </select>
@@ -807,7 +760,6 @@ const DEFAULT_MOODS = [
 // Spotify's pitch form takes two moods. Warn past the cap rather than block —
 // her other destinations may allow more.
 const DEFAULT_CAP = 2;
-const ENERGIES = ["Low","Medium","High"];
 
 // The tool is not tied to any one assistant. ChatGPT is the default because
 // that is what gets used here; the prompt itself names no vendor, so it works
@@ -939,12 +891,8 @@ function normalise(s){
     title: s.title || "", artist: s.artist || "",
     lyrics: s.lyrics || "", lyricLanguage: s.lyricLanguage || "",
     genre: s.genre || "",
-    energy: ENERGIES.indexOf(s.energy) > -1 ? s.energy : "",
     moods: Array.isArray(s.moods) ? s.moods.slice() : [],
-    themes: Array.isArray(s.themes) ? s.themes.slice() : [],
     description: s.description || "",
-    status: (s.status === "approved" || s.status === "sent") ? s.status : "draft",
-    releaseDate: s.releaseDate || "", pitchDeadline: s.pitchDeadline || "",
     versions: Array.isArray(s.versions) ? s.versions.slice(0,12) : [],
     createdAt: s.createdAt || nowIso(), updatedAt: s.updatedAt || s.createdAt || nowIso()
   };
@@ -1063,7 +1011,7 @@ async function saveHouse(text){
 }
 
 /* --------------------------------------------------------------- draft */
-const draft = { id:null, moods:[], themes:[], versions:[], createdAt:null };
+const draft = { id:null, moods:[], versions:[], createdAt:null };
 
 function collect(){
   return {
@@ -1072,14 +1020,12 @@ function collect(){
     lyrics: $("fLyrics").value,
     lang: $("fLang").value,
     genre: $("fGenre").value.trim(),
-    energy: $("fEnergy").value,
     moods: draft.moods.slice(),
-    themes: draft.themes.slice(),
     pitch: $("fPitch").value
   };
 }
 
-/* --------------------------------------------------------- mood/themes */
+/* --------------------------------------------------------------- moods */
 function renderMoods(){
   const box = $("moodPicker");
   box.textContent = "";
@@ -1114,22 +1060,6 @@ function renderMoods(){
   if (over) note.textContent = draft.moods.length + " picked \u00b7 most pitch forms take " + cap;
 }
 
-function renderThemes(){
-  const box = $("themeChips");
-  box.textContent = "";
-  for (const t of draft.themes){
-    const c = el("span", "chip removable", t);
-    c.dataset.fam = "deep";
-    c.appendChild(el("span", "x", "×"));
-    c.title = "Remove this theme";
-    c.addEventListener("click", () => {
-      draft.themes = draft.themes.filter(x => x !== t);
-      renderThemes(); refreshPrompt(); markDirty();
-    });
-    box.appendChild(c);
-  }
-}
-
 function addMood(raw){
   const v = raw.trim();
   if (!v) return;
@@ -1138,31 +1068,30 @@ function addMood(raw){
   if (!draft.moods.some(m => m.toLowerCase() === name.toLowerCase())) draft.moods.push(name);
   renderMoods(); refreshPrompt(); markDirty();
 }
-function addTheme(raw){
-  const v = raw.trim();
-  if (!v) return;
-  if (!draft.themes.some(t => t.toLowerCase() === v.toLowerCase())) draft.themes.push(v);
-  renderThemes(); refreshPrompt(); markDirty();
-}
-
 /* -------------------------------------------------------------- prompt */
 function buildPrompt(){
   const d = collect();
   const lyrics = d.lyrics.slice(0, LYRIC_CAP);
   const house = houseStyle.trim();
   const L = [];
-  L.push("You are writing a song pitch for a music label. Read the song below and reply in the exact block format at the end.");
+  L.push("You are writing a polished song description for a music label. Read the song below and reply in the exact block format at the end.");
   L.push("");
   L.push("RULES");
-  L.push("- PITCH must be " + LIMIT + " characters or fewer, counting spaces and punctuation. This is a hard cap on the form it goes into. Count it before you answer and rewrite it shorter if it is over.");
-  L.push("- Write PITCH in English, whatever language the lyrics are in.");
-  L.push("- One paragraph of flowing prose. No heading, no quotation marks around it, no bullet points, no emoji, no hashtags.");
-  L.push("- Say what the song is, what it is about and who it is for. Name the hook or the strongest image in the lyrics.");
-  L.push("- No superlatives, no comparisons to other artists, nothing you cannot actually hear in the lyrics.");
+  L.push("- DESCRIPTION must be " + LIMIT + " characters or fewer, counting spaces and punctuation. This is a hard cap. Count it before answering and rewrite it shorter if needed.");
+  L.push("- Write DESCRIPTION in English, whatever language the lyrics are in.");
+  L.push("- Write one flowing paragraph, ideally three concise sentences. No heading, bullet points, emoji or hashtags.");
+  L.push("- Open with the song title in curly quotation marks. Include the artist naturally in the first sentence when supplied.");
+  L.push("- First identify the genre or sonic blend and central subject. Then explain the story, conflict or message. Close with its emotional effect or musical character when supported by the supplied information.");
+  L.push("- Use a clear editorial label tone: descriptive and emotionally specific, never salesy.");
+  L.push("- No superlatives, comparisons to other artists or invented production, vocal or instrumental details.");
   L.push("- MOODS: choose " + (vocab.moodCap > 1 ? "up to " + vocab.moodCap : "one") +
     ", only from this list — " + vocab.moods.map(m => m.name).join(", ") + ".");
   L.push("- GENRE: one short phrase, such as \"pop ballad\", \"dance-pop\", \"alt-R&B\", \"acoustic singer-songwriter\".");
-  L.push("- THEMES: 3 to 5 short noun phrases.");
+  L.push("");
+  L.push("STYLE REFERENCES — match their structure and tone, but obey the " + LIMIT + "-character cap");
+  L.push("“Akur” by Zaki Yamani is an emotional pop ballad about heartbreak, acceptance, and the difficult choice to let go. The song captures the pain of realizing that a relationship has changed, while choosing to honour a partner’s feelings despite the hurt. Through a melancholic mood, it reflects on love, sacrifice, and the strength it takes to step aside.");
+  L.push("“完美世界 (PRFT WRLD)” blends underground rap and rage while exploring Lokk’s self-created reality—one free from outside judgment, competition, and expectations. Rather than depicting an ideal world, the track embraces scars, resilience, and the freedom to create your own rules when reality no longer fits.");
+  L.push("“IKON” is a high-energy pop anthem blending 80s disco nostalgia with modern dance-pop and electropop. Its confident message celebrates individuality and the idea that everyone can be an icon. Bold and celebratory, it is built around movement, self-expression, and creating your own moment.");
   if (house){
     L.push("");
     L.push("HOUSE STYLE — these win over anything above");
@@ -1175,7 +1104,6 @@ function buildPrompt(){
   if (d.lang) L.push("Lyric language: " + d.lang);
   if (d.genre) L.push("Genre the label already has down: " + d.genre);
   if (d.moods.length) L.push("Moods the label already has down: " + d.moods.join(", "));
-  if (d.energy) L.push("Energy: " + d.energy);
   L.push("");
   L.push("LYRICS");
   L.push('"""');
@@ -1185,16 +1113,15 @@ function buildPrompt(){
   L.push("REPLY IN EXACTLY THIS FORMAT AND NOTHING ELSE");
   L.push("GENRE: <genre>");
   L.push("MOODS: <comma separated, from the list above>");
-  L.push("THEMES: <comma separated>");
-  L.push("PITCH: <the pitch, " + LIMIT + " characters or fewer>");
-  L.push("CHARACTERS: <how many characters PITCH actually is>");
+  L.push("DESCRIPTION: <the description, " + LIMIT + " characters or fewer>");
+  L.push("CHARACTERS: <how many characters DESCRIPTION actually is>");
   return L.join("\n");
 }
 
 function shortenPrompt(text){
-  return "Rewrite this song pitch so it is " + LIMIT + " characters or fewer, counting spaces and punctuation. " +
-    "Keep the meaning, the tone and the hook it names. Do not add anything new. " +
-    "Reply with only the rewritten pitch and nothing else.\n\n" +
+  return "Rewrite this song description so it is " + LIMIT + " characters or fewer, counting spaces and punctuation. " +
+    "Keep the meaning, specificity and editorial tone. Do not add anything new. " +
+    "Reply with only the rewritten description and nothing else.\n\n" +
     "It is currently " + text.length + " characters, so it needs to lose at least " + (text.length - LIMIT) + ".\n\n" + text;
 }
 
@@ -1205,7 +1132,7 @@ function refreshPrompt(){
 }
 
 /* --------------------------------------------------------------- parse */
-const FIELDS = "GENRE|MOODS?|THEMES?|PITCH|DESCRIPTION|CHARACTERS?|CHARACTER COUNT|LENGTH";
+const FIELDS = "GENRE|MOODS?|PITCH|DESCRIPTION|CHARACTERS?|CHARACTER COUNT|LENGTH";
 function grabField(text, word){
   const re = new RegExp(
     "(?:^|\\n)[ \\t>*_#-]*(?:\\*\\*)?\\s*(?:" + word + ")\\s*(?:\\*\\*)?\\s*[:\\uFF1A]\\s*" +
@@ -1239,7 +1166,7 @@ function stripFences(text){
 }
 
 function parseReply(text){
-  const out = { genre:"", moods:[], themes:[], pitch:"" };
+  const out = { genre:"", moods:[], pitch:"" };
   const raw = stripFences(text);
   if (!raw) return out;
 
@@ -1250,9 +1177,7 @@ function parseReply(text){
       const o = Array.isArray(j) ? (j[0] || {}) : j;
       out.genre = String(o.genre || o.GENRE || "").trim();
       const mm = o.moods || o.MOODS || o.mood;
-      const tt = o.themes || o.THEMES || o.theme;
       out.moods = Array.isArray(mm) ? mm.map(String) : (mm ? splitList(String(mm)) : []);
-      out.themes = Array.isArray(tt) ? tt.map(String) : (tt ? splitList(String(tt)) : []);
       out.pitch = unwrap(String(o.pitch || o.PITCH || o.description || o.DESCRIPTION || ""));
       if (out.genre || out.moods.length || out.pitch) return out;
     } catch(e){ /* not JSON after all */ }
@@ -1260,14 +1185,12 @@ function parseReply(text){
 
   out.genre = unwrap(grabField(raw, "GENRE")).split(/\n/)[0].trim();
   const moods = grabField(raw, "MOODS?");
-  const themes = grabField(raw, "THEMES?");
   out.moods = moods ? splitList(moods) : [];
-  out.themes = themes ? splitList(themes) : [];
   const pitch = grabField(raw, "PITCH") || grabField(raw, "DESCRIPTION");
   out.pitch = pitch ? unwrap(pitch) : "";
 
   // Nothing structured at all — treat the whole reply as the pitch.
-  if (!out.genre && !out.moods.length && !out.themes.length && !out.pitch){
+  if (!out.genre && !out.moods.length && !out.pitch){
     out.pitch = unwrap(raw);
   }
   return out;
@@ -1282,13 +1205,8 @@ function applyReply(text){
     p.moods.forEach(addMood);
     filled.push("mood");
   }
-  if (p.themes.length){
-    draft.themes = [];
-    p.themes.forEach(addTheme);
-    filled.push("themes");
-  }
-  if (p.pitch){ $("fPitch").value = p.pitch; filled.push("the pitch"); }
-  renderMoods(); renderThemes(); updateMeter(); refreshPrompt();
+  if (p.pitch){ $("fPitch").value = p.pitch; filled.push("the description"); }
+  renderMoods(); updateMeter(); refreshPrompt();
 
   if (!filled.length){ toast("Nothing to read in that — paste the whole reply", true); return; }
   const n = $("fPitch").value.length;
@@ -1430,7 +1348,7 @@ async function writeHere(){
 
 async function tighten(){
   const text = $("fPitch").value;
-  if (!text.trim()){ toast("Write or paste a pitch first", true); return; }
+  if (!text.trim()){ toast("Write or paste a description first", true); return; }
   if (text.length <= LIMIT){ toast("It already fits — " + (LIMIT - text.length) + " characters to spare"); return; }
   const prompt = shortenPrompt(text);
   if (!sampleFn){
@@ -1460,27 +1378,17 @@ async function tighten(){
 /* -------------------------------------------------------------- library */
 function libraryRows(){
   const q = $("fSearch").value.trim().toLowerCase();
-  const status = $("fFilter").value;
   const sort = $("fSort").value;
   let rows = store.songs.slice();
-  if (status) rows = rows.filter(s => s.status === status);
   if (q) rows = rows.filter(s =>
     (s.title + " " + s.artist + " " + s.description + " " + s.genre + " " +
-     s.moods.join(" ") + " " + s.themes.join(" ") + " " + s.lyrics).toLowerCase().indexOf(q) !== -1);
+     s.moods.join(" ") + " " + s.lyrics).toLowerCase().indexOf(q) !== -1);
 
   if (sort === "title") rows.sort((a,b) => (a.title||"~").localeCompare(b.title||"~"));
   else if (sort === "artist") rows.sort((a,b) => (a.artist||"~").localeCompare(b.artist||"~"));
-  else if (sort === "deadline") rows.sort((a,b) => {
-    if (a.pitchDeadline && b.pitchDeadline) return a.pitchDeadline.localeCompare(b.pitchDeadline);
-    if (a.pitchDeadline) return -1;
-    if (b.pitchDeadline) return 1;
-    return (b.updatedAt || "").localeCompare(a.updatedAt || "");
-  });
   else rows.sort((a,b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
   return rows;
 }
-
-function statusWord(s){ return s === "approved" ? "Approved" : s === "sent" ? "Sent" : "Draft"; }
 
 function entryNode(s){
   const card = el("div", "entry" + (s.id === draft.id ? " editing" : ""));
@@ -1490,11 +1398,10 @@ function entryNode(s){
   idc.appendChild(el("h3", null, s.title || "Untitled"));
   idc.appendChild(el("p", null, s.artist || "Unknown artist"));
   top.appendChild(idc);
-  top.appendChild(el("span", "pill " + s.status, statusWord(s.status)));
   card.appendChild(top);
 
   const desc = el("p", "desc" + (s.description ? "" : " empty"),
-    s.description || "No pitch written yet.");
+    s.description || "No description written yet.");
   card.appendChild(desc);
 
   if (s.genre || s.moods.length){
@@ -1516,10 +1423,6 @@ function entryNode(s){
   const chars = el("span", s.description.length > LIMIT ? "over" : null,
     s.description.length + "/" + LIMIT);
   meta.appendChild(chars);
-  if (s.energy) meta.appendChild(el("span", null, s.energy.toLowerCase() + " energy"));
-  if (s.pitchDeadline) meta.appendChild(el("span", null, "due " + fmtDate(s.pitchDeadline)));
-  if (s.releaseDate) meta.appendChild(el("span", null, "out " + fmtDate(s.releaseDate)));
-  meta.appendChild(el("span", null, "edited " + fmtDate(s.updatedAt)));
   if (s.versions.length) meta.appendChild(el("span", null, s.versions.length + " older"));
   card.appendChild(meta);
 
@@ -1532,11 +1435,11 @@ function entryNode(s){
   const cp = el("button", "btn sm");
   cp.type = "button";
   cp.appendChild(icon("i-copy"));
-  cp.appendChild(document.createTextNode("Copy pitch"));
+  cp.appendChild(document.createTextNode("Copy description"));
   cp.disabled = !s.description;
   cp.addEventListener("click", async () => {
     const ok = await copyText(s.description);
-    toast(ok ? "Pitch copied" : "Could not copy", !ok);
+    toast(ok ? "Description copied" : "Could not copy", !ok);
   });
   acts.appendChild(cp);
 
@@ -1596,7 +1499,7 @@ function renderLibrary(){
     p.appendChild(el("b", null, total ? "Nothing matches" : "The library is empty"));
     p.appendChild(document.createTextNode(total
       ? "Change the search or the filter to see the rest."
-      : "Write your first pitch and it will sit here, searchable, for as long as you want it."));
+      : "Write your first description and it will sit here, searchable, for as long as you want it."));
     empty.appendChild(p);
     list.appendChild(empty);
     return;
@@ -1673,7 +1576,6 @@ function loadIntoDesk(s){
 function reallyLoad(s){
   draft.id = s.id;
   draft.moods = s.moods.slice();
-  draft.themes = s.themes.slice();
   draft.versions = s.versions.slice();
   draft.createdAt = s.createdAt;
   $("fTitle").value = s.title;
@@ -1681,13 +1583,9 @@ function reallyLoad(s){
   $("fLyrics").value = s.lyrics;
   $("fLang").value = s.lyricLanguage || "";
   $("fGenre").value = s.genre;
-  $("fEnergy").value = s.energy || "";
   $("fPitch").value = s.description;
-  $("fStatus").value = s.status;
-  $("fRelease").value = s.releaseDate || "";
-  $("fDeadline").value = s.pitchDeadline || "";
   $("fReply").value = "";
-  renderMoods(); renderThemes(); renderVersions();
+  renderMoods(); renderVersions();
   updateMeter(); updateLyricCount(); refreshPrompt();
   setEditing(true); renderLibrary();
   deskDirty = false; saveDesk();
@@ -1697,12 +1595,12 @@ function reallyLoad(s){
 }
 
 function resetDesk(){
-  draft.id = null; draft.moods = []; draft.themes = []; draft.versions = []; draft.createdAt = null;
-  ["fTitle","fArtist","fLyrics","fGenre","fPitch","fReply","fRelease","fDeadline","fMoodCustom","fThemeInput"]
+  draft.id = null; draft.moods = []; draft.versions = []; draft.createdAt = null;
+  ["fTitle","fArtist","fLyrics","fGenre","fPitch","fReply","fMoodCustom"]
     .forEach(id => { $(id).value = ""; });
-  $("fLang").value = ""; $("fEnergy").value = ""; $("fStatus").value = "draft";
+  $("fLang").value = "";
   forgetDesk();
-  renderMoods(); renderThemes(); renderVersions();
+  renderMoods(); renderVersions();
   updateMeter(); updateLyricCount(); refreshPrompt();
   setEditing(false); renderLibrary();
 }
@@ -1723,9 +1621,7 @@ async function saveCurrent(){
   const song = normalise({
     id: draft.id || uid(),
     title: d.title, artist: d.artist, lyrics: d.lyrics, lyricLanguage: d.lang,
-    genre: d.genre, energy: d.energy, moods: d.moods, themes: d.themes,
-    description: d.pitch, status: $("fStatus").value,
-    releaseDate: $("fRelease").value, pitchDeadline: $("fDeadline").value,
+    genre: d.genre, moods: d.moods, description: d.pitch,
     versions: versions.slice(0, 12),
     createdAt: existing ? existing.createdAt : (draft.createdAt || nowIso()),
     updatedAt: nowIso()
@@ -1747,11 +1643,10 @@ function csvCell(v){
   return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 function toCsv(rows){
-  const head = ["Title","Artist","Genre","Energy","Moods","Themes","Pitch","Characters","Status","Release date","Pitch deadline","Last edited"];
+  const head = ["Title","Artist","Genre","Moods","Description","Characters","Last edited"];
   const body = rows.map(s => [
-    s.title, s.artist, s.genre, s.energy, s.moods.join("; "), s.themes.join("; "),
-    s.description, s.description.length, statusWord(s.status),
-    s.releaseDate, s.pitchDeadline, s.updatedAt
+    s.title, s.artist, s.genre, s.moods.join("; "),
+    s.description, s.description.length, s.updatedAt
   ].map(csvCell).join(","));
   return "﻿" + [head.map(csvCell).join(",")].concat(body).join("\r\n");
 }
@@ -1776,7 +1671,7 @@ function openHouse(){
   openSheet((sheet, close) => {
     sheet.appendChild(el("h2", null, "House style"));
     sheet.appendChild(el("p", null,
-      "Standing instructions added to the bottom of every prompt, so all your pitches sound like they came from the same desk. Saved once and used every time."));
+      "Standing instructions added to every prompt, so all your descriptions follow the same house style. Saved once and used every time."));
     const ta = el("textarea");
     ta.rows = 7;
     ta.value = houseStyle;
@@ -2235,15 +2130,14 @@ function deskSnapshot(){
   const d = collect();
   return {
     id: draft.id, title:d.title, artist:d.artist, lyrics:d.lyrics, lang:d.lang,
-    genre:d.genre, energy:d.energy, moods:d.moods, themes:d.themes, pitch:d.pitch,
-    status: $("fStatus").value, release: $("fRelease").value, deadline: $("fDeadline").value,
+    genre:d.genre, moods:d.moods, pitch:d.pitch,
     versions: draft.versions, createdAt: draft.createdAt
   };
 }
 function deskEmpty(x){
-  return !(x.title || x.artist || x.genre || x.energy ||
+  return !(x.title || x.artist || x.genre ||
     (x.lyrics || "").trim() || (x.pitch || "").trim() ||
-    (x.moods || []).length || (x.themes || []).length);
+    (x.moods || []).length);
 }
 function saveDesk(){
   const snap = deskSnapshot();
@@ -2270,7 +2164,6 @@ function restoreDesk(){
   if (!x || deskEmpty(x)) return false;
   draft.id = x.id || null;
   draft.moods = Array.isArray(x.moods) ? x.moods : [];
-  draft.themes = Array.isArray(x.themes) ? x.themes : [];
   draft.versions = Array.isArray(x.versions) ? x.versions : [];
   draft.createdAt = x.createdAt || null;
   $("fTitle").value = x.title || "";
@@ -2278,12 +2171,8 @@ function restoreDesk(){
   $("fLyrics").value = x.lyrics || "";
   $("fLang").value = x.lang || "";
   $("fGenre").value = x.genre || "";
-  $("fEnergy").value = x.energy || "";
   $("fPitch").value = x.pitch || "";
-  $("fStatus").value = x.status || "draft";
-  $("fRelease").value = x.release || "";
-  $("fDeadline").value = x.deadline || "";
-  renderMoods(); renderThemes(); renderVersions();
+  renderMoods(); renderVersions();
   updateMeter(); updateLyricCount(); refreshPrompt();
   setEditing(!!draft.id);
   return true;
@@ -2294,10 +2183,6 @@ function restoreDesk(){
 $("fLang").addEventListener("change", refreshPrompt);
 $("fLyrics").addEventListener("input", () => { updateLyricCount(); refreshPrompt(); });
 $("fPitch").addEventListener("input", updateMeter);
-
-$("fThemeInput").addEventListener("keydown", e => {
-  if (e.key === "Enter"){ e.preventDefault(); addTheme(e.target.value); e.target.value = ""; }
-});
 
 $("btnCopyPrompt").addEventListener("click", async () => {
   const ok = await copyText(buildPrompt());
@@ -2338,7 +2223,7 @@ $("btnCopyPitch").addEventListener("click", async () => {
   const t = $("fPitch").value;
   if (!t.trim()){ toast("Nothing to copy yet", true); return; }
   const ok = await copyText(t);
-  toast(ok ? (t.length > LIMIT ? "Copied — but it is " + (t.length - LIMIT) + " over the limit" : "Pitch copied") : "Could not copy", !ok || t.length > LIMIT);
+  toast(ok ? (t.length > LIMIT ? "Copied — but it is " + (t.length - LIMIT) + " over the limit" : "Description copied") : "Could not copy", !ok || t.length > LIMIT);
 });
 $("btnSave").addEventListener("click", saveCurrent);
 $("btnNew").addEventListener("click", () => { resetDesk(); toast("Fresh song — the last one is saved"); });
@@ -2353,7 +2238,7 @@ $("btnVocab").addEventListener("click", openVocab);
 $("paneCompose").addEventListener("input", markDirty);
 $("paneCompose").addEventListener("change", markDirty);
 
-["fSearch","fFilter","fSort"].forEach(id => {
+["fSearch","fSort"].forEach(id => {
   $(id).addEventListener("input", renderLibrary);
   $(id).addEventListener("change", renderLibrary);
 });
@@ -2377,7 +2262,6 @@ enhanceCombo(
 
 showPane("compose");
 renderMoods();
-renderThemes();
 renderVersions();
 updateMeter();
 updateLyricCount();
